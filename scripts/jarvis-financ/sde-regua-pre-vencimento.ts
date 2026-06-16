@@ -4,13 +4,26 @@
 // Orquestrador domain-specific (jarvis-financ). Wraps:
 //   sde bancointer boletos          — fonte dos boletos A_RECEBER
 //   sde tiny conta-receber <id>     — resolve seuNumero → telefone/nome
-//   ravi contacts find|add|tag      — sincroniza tags boleto:* no Ravi
+//   ravi contacts find|show|add|tag — sincroniza tags boleto:* no Ravi
 //
 // Spec: /home/ravi/main-kimi/specs/sde-regua-pre-vencimento.md §4.1
 // Operação: cron diário 6h BRT no jarvis-financ
 //
+// Modelo: um contato pode ter vários boletos com vencimentos distintos.
+// O CLI agrupa boletos por telefone, calcula a tag mais crítica do grupo
+// e aplica APENAS essa tag por contato, removendo as tags boleto:*
+// obsoletas. Idempotência é via tags atuais do contato (policy.tags),
+// não via log.
+//
+// Prioridade entre tags: lida em runtime do metadado do pipeline
+// crm_pipeline_1d1139c4265c (regua_tags[].priority) via
+// `ravi crm pipeline show <id> --json`. Entradas com priority null são
+// ignoradas (ex.: cobranca:em-aberto pertence ao pós-vencimento). Falha
+// loud se metadado estiver indisponível ou incompleto — a régua não
+// pode operar com priorities stale ou desconhecidas.
+//
 // Subcomandos:
-//   preview   dry-run; lista o que faria
+//   preview   dry-run; lista grupos por contato e o que seria feito
 //   apply     aplica tags + cria contatos + escreve JSONL
 //   status    resumo do último run a partir do JSONL
 
@@ -18,14 +31,16 @@ import { Command } from "commander";
 import { spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 
 const LOG_DIR = join(homedir(), ".ravi", "jarvis-financ");
 const LOG_FILE = join(LOG_DIR, "regua-pre-vencimento.log");
-const VERSION = "0.1.0";
+const VERSION = "0.3.0";
+const PIPELINE_ID = process.env.SDE_COBRANCA_PIPELINE_ID ?? "crm_pipeline_1d1139c4265c";
 
 type Tag = "boleto:emitido" | "boleto:vence-em-2d" | "boleto:vence-hoje";
 const ALL_TAGS: Tag[] = ["boleto:emitido", "boleto:vence-em-2d", "boleto:vence-hoje"];
+type TagRank = Record<Tag, number>;
 
 interface BoletoCobranca {
 	codigoSolicitacao: string;
@@ -67,12 +82,35 @@ interface RaviContactsFindResp {
 		id?: string;
 		canonicalIdentity?: string;
 		primaryIdentity?: string;
+		name?: string;
 		displayName?: string;
-		identities?: Array<{ identity?: string }>;
+		tags?: string[];
 	}>;
 }
 
-interface PlanItem {
+interface RaviContactsShowResp {
+	found?: boolean;
+	target?: string;
+	contact?: { id?: string; displayName?: string };
+	policy?: { tags?: string[] };
+}
+
+interface ReguaTagEntry {
+	tag?: string;
+	priority?: number | null;
+}
+
+interface RaviCrmPipelineShowResp {
+	pipeline?: {
+		id?: string;
+		name?: string;
+		metadata?: {
+			regua_tags?: ReguaTagEntry[];
+		};
+	};
+}
+
+interface BoletoItem {
 	codigoSolicitacao: string;
 	seuNumero: string;
 	pagador_nome: string;
@@ -84,11 +122,33 @@ interface PlanItem {
 	skip_reason: string | null;
 	telefone_raw: string | null;
 	telefone_norm: string | null;
+	tiny_warning: string | null;
+}
+
+interface ContactGroup {
+	telefone_norm: string;
 	contato_existe: boolean;
 	contato_id: string | null;
 	contato_nome_existente: string | null;
+	pagador_nomes: string[];
+	current_boleto_tags: Tag[];
+	boletos: BoletoItem[];
+	tag_alvo: Tag;
 	tags_a_remover: Tag[];
-	tiny_warning: string | null;
+	needs_apply: boolean;
+	warning: string | null;
+}
+
+interface BoletoSkip {
+	boleto: BoletoItem;
+	reason: string;
+}
+
+interface Plan {
+	today: string;
+	janela_fim: string;
+	groups: ContactGroup[];
+	skipped: BoletoSkip[];
 }
 
 interface LogEntry {
@@ -99,11 +159,11 @@ interface LogEntry {
 		| "run-start"
 		| "run-end"
 		| "tag-applied"
-		| "tag-skipped-already-applied"
+		| "tag-noop"
 		| "tag-removed"
 		| "contact-created"
-		| "contact-found"
 		| "boleto-skipped"
+		| "group-skipped"
 		| "warn"
 		| "error";
 	dry_run: boolean;
@@ -182,10 +242,56 @@ function diffDays(target: string, base: string): number {
 function targetTag(dias: number): { tag: Tag | null; skip_reason: string | null } {
 	if (dias < 0) return { tag: null, skip_reason: "atrasado-pertence-pos-venc" };
 	if (dias === 0) return { tag: "boleto:vence-hoje", skip_reason: null };
-	if (dias === 2) return { tag: "boleto:vence-em-2d", skip_reason: null };
-	if (dias === 1) return { tag: null, skip_reason: "dia-1-fora-da-regua-spec" };
+	if (dias === 1 || dias === 2) return { tag: "boleto:vence-em-2d", skip_reason: null };
 	if (dias >= 3) return { tag: "boleto:emitido", skip_reason: null };
 	return { tag: null, skip_reason: "fora-da-janela" };
+}
+
+function highestTag(tags: Iterable<Tag>, rank: TagRank): Tag | null {
+	let best: Tag | null = null;
+	let bestRank = -Infinity;
+	for (const t of tags) {
+		const r = rank[t];
+		if (r > bestRank) {
+			best = t;
+			bestRank = r;
+		}
+	}
+	return best;
+}
+
+// Lê prioridade das tags boleto:* do metadado do pipeline (regua_tags[].priority).
+// Falha loud se faltar metadado, prioridade null, ou tag esperada ausente — a
+// régua não pode operar com configuração stale.
+function loadTagRank(): TagRank {
+	const resp = jsonCmd<RaviCrmPipelineShowResp>("ravi", [
+		"crm",
+		"pipeline",
+		"show",
+		PIPELINE_ID,
+	]);
+	const entries = resp.pipeline?.metadata?.regua_tags;
+	if (!Array.isArray(entries)) {
+		throw new Error(
+			`pipeline ${PIPELINE_ID} sem metadata.regua_tags — não dá pra calcular prioridade`,
+		);
+	}
+
+	const rank: Partial<TagRank> = {};
+	for (const e of entries) {
+		if (!e || typeof e.tag !== "string") continue;
+		if (typeof e.priority !== "number") continue; // ignora null (ex.: cobranca:em-aberto)
+		if (!ALL_TAGS.includes(e.tag as Tag)) continue; // ignora tags fora do escopo da régua
+		rank[e.tag as Tag] = e.priority;
+	}
+
+	const missing = ALL_TAGS.filter((t) => typeof rank[t] !== "number");
+	if (missing.length > 0) {
+		throw new Error(
+			`pipeline ${PIPELINE_ID}.regua_tags sem priority numérica pra: ${missing.join(", ")}`,
+		);
+	}
+	return rank as TagRank;
 }
 
 // ---------- phone normalize ----------
@@ -203,6 +309,10 @@ function normalizePhone(raw: string | null | undefined): string | null {
 	}
 	if (digits.length === 10 || digits.length === 11) return `+55${digits}`;
 	return null;
+}
+
+function digitsOnly(phone: string): string {
+	return phone.replace(/[^\d]/g, "");
 }
 
 // ---------- log ----------
@@ -231,42 +341,34 @@ function readLog(): LogEntry[] {
 	return out;
 }
 
-function alreadyAppliedToday(idem: string, runDate: string, log: LogEntry[]): boolean {
-	return log.some(
-		(e) =>
-			e.action === "tag-applied" &&
-			e.idempotency_key === idem &&
-			e.run_date === runDate &&
-			e.dry_run === false,
-	);
-}
-
 // ---------- ravi contacts ----------
 
-function findContactByPhone(phone: string): {
+interface ContactLookup {
 	id: string | null;
 	displayName: string | null;
 	tags: Tag[];
-} {
-	const resp = jsonCmd<RaviContactsFindResp>("ravi", ["contacts", "find", phone]);
+}
+
+function findContactByPhone(phoneNorm: string): ContactLookup {
+	// Regra (7): `ravi contacts find` SEM o '+'. Passa só digits.
+	const query = digitsOnly(phoneNorm);
+	const resp = jsonCmd<RaviContactsFindResp>("ravi", ["contacts", "find", query]);
 	if (resp.total === 0 || resp.contacts.length === 0) {
 		return { id: null, displayName: null, tags: [] };
 	}
 	const c = resp.contacts[0];
 	const id = c?.id ?? c?.canonicalIdentity ?? c?.primaryIdentity ?? null;
-	const displayName = c?.displayName ?? null;
+	const displayName = c?.displayName ?? c?.name ?? null;
+
+	// Regra (8): tags do contato vivem em `policy.tags` (via show).
 	let tags: Tag[] = [];
 	if (id) {
 		try {
-			interface ContactShowResp {
-				tags?: string[];
-				contact?: { tags?: string[] };
-			}
-			const show = jsonCmd<ContactShowResp>("ravi", ["contacts", "show", id]);
-			const rawTags = show.tags ?? show.contact?.tags ?? [];
+			const show = jsonCmd<RaviContactsShowResp>("ravi", ["contacts", "show", id]);
+			const rawTags = show.policy?.tags ?? [];
 			tags = rawTags.filter((t): t is Tag => ALL_TAGS.includes(t as Tag));
 		} catch {
-			// non-fatal: if show fails, we proceed without knowing existing tags
+			// non-fatal: se show falhar, prossegue sem saber tags atuais
 			tags = [];
 		}
 	}
@@ -341,16 +443,17 @@ function resolveTinyCustomer(seuNumero: string): {
 	}
 }
 
-function buildPlan(today: string): PlanItem[] {
-	const fim = addDaysISO(today, 7);
-	const boletos = fetchBoletos({ inicio: today, fim });
+function buildPlan(today: string, rank: TagRank): Plan {
+	const janela_fim = addDaysISO(today, 7);
+	const boletos = fetchBoletos({ inicio: today, fim: janela_fim });
 
-	const items: PlanItem[] = [];
+	// Fase 1: normaliza cada boleto em BoletoItem com tag isolada + telefone Tiny.
+	const items: BoletoItem[] = [];
 	for (const b of boletos) {
 		const dias = diffDays(b.dataVencimento, today);
 		const { tag, skip_reason } = targetTag(dias);
 
-		const item: PlanItem = {
+		const item: BoletoItem = {
 			codigoSolicitacao: b.codigoSolicitacao,
 			seuNumero: b.seuNumero,
 			pagador_nome: b.pagador?.nome ?? "",
@@ -362,10 +465,6 @@ function buildPlan(today: string): PlanItem[] {
 			skip_reason,
 			telefone_raw: null,
 			telefone_norm: null,
-			contato_existe: false,
-			contato_id: null,
-			contato_nome_existente: null,
-			tags_a_remover: [],
 			tiny_warning: null,
 		};
 
@@ -381,82 +480,145 @@ function buildPlan(today: string): PlanItem[] {
 
 		if (!item.telefone_norm) {
 			item.skip_reason = item.skip_reason ?? "sem-telefone-resolvivel";
-			items.push(item);
-			continue;
 		}
-
-		const found = findContactByPhone(item.telefone_norm);
-		item.contato_existe = Boolean(found.id);
-		item.contato_id = found.id;
-		item.contato_nome_existente = found.displayName;
-		item.tags_a_remover = found.tags.filter((t) => t !== tag);
 
 		items.push(item);
 	}
 
-	return items;
+	// Fase 2: separa skipped de elegíveis e agrupa elegíveis por telefone.
+	const skipped: BoletoSkip[] = [];
+	const eligible: BoletoItem[] = [];
+	for (const it of items) {
+		if (!it.tag_alvo || it.skip_reason || !it.telefone_norm) {
+			skipped.push({
+				boleto: it,
+				reason: it.skip_reason ?? "sem-tag",
+			});
+		} else {
+			eligible.push(it);
+		}
+	}
+
+	// Fase 3: agrupa por telefone, lê contato uma vez por telefone, calcula tag mais crítica.
+	const byPhone = new Map<string, BoletoItem[]>();
+	for (const it of eligible) {
+		const arr = byPhone.get(it.telefone_norm as string) ?? [];
+		arr.push(it);
+		byPhone.set(it.telefone_norm as string, arr);
+	}
+
+	const groups: ContactGroup[] = [];
+	for (const [phone, bs] of byPhone) {
+		const lookup = findContactByPhone(phone);
+		const tagsBoletos = bs
+			.map((b) => b.tag_alvo)
+			.filter((t): t is Tag => t !== null);
+		const tagAlvo = highestTag(tagsBoletos, rank);
+		if (!tagAlvo) {
+			// guard impossível dado o filtro anterior; trata defensivamente
+			for (const b of bs) skipped.push({ boleto: b, reason: "sem-tag-elegivel" });
+			continue;
+		}
+		const tagsARemover = lookup.tags.filter((t) => t !== tagAlvo);
+		const needsApply = !lookup.tags.includes(tagAlvo);
+
+		const pagadorNomes: string[] = [];
+		for (const b of bs) {
+			if (b.pagador_nome && !pagadorNomes.includes(b.pagador_nome)) {
+				pagadorNomes.push(b.pagador_nome);
+			}
+		}
+
+		const tinyWarning = bs.find((b) => b.tiny_warning)?.tiny_warning ?? null;
+
+		groups.push({
+			telefone_norm: phone,
+			contato_existe: Boolean(lookup.id),
+			contato_id: lookup.id,
+			contato_nome_existente: lookup.displayName,
+			pagador_nomes: pagadorNomes,
+			current_boleto_tags: lookup.tags,
+			boletos: bs,
+			tag_alvo: tagAlvo,
+			tags_a_remover: tagsARemover,
+			needs_apply: needsApply,
+			warning: tinyWarning,
+		});
+	}
+
+	return { today, janela_fim, groups, skipped };
 }
 
 // ---------- output formatting ----------
 
-function fmtItem(i: PlanItem): string {
-	const tag = i.tag_alvo ?? "(skip)";
-	const reason = i.skip_reason ? ` [skip: ${i.skip_reason}]` : "";
-	const phone = i.telefone_norm ?? i.telefone_raw ?? "(sem fone)";
-	const contato = i.contato_existe
-		? `contato#${i.contato_id?.slice(0, 12) ?? "?"}`
-		: i.telefone_norm
-			? "NOVO"
-			: "—";
-	const rem = i.tags_a_remover.length > 0 ? ` rem=[${i.tags_a_remover.join(",")}]` : "";
-	const warn = i.tiny_warning ? ` ⚠ ${i.tiny_warning}` : "";
-	return [
-		`  ${i.data_vencimento}`,
-		`d=${String(i.dias_ate_venc).padStart(2, " ")}`,
-		`R$${i.valor.padStart(9, " ")}`,
-		tag.padEnd(20, " "),
-		phone.padEnd(15, " "),
-		contato.padEnd(20, " "),
-		i.pagador_nome,
-		rem,
-		reason,
-		warn,
-	].join(" ");
+function fmtBoleto(b: BoletoItem): string {
+	return `      ${b.data_vencimento} d=${String(b.dias_ate_venc).padStart(2, " ")} R$${b.valor.padStart(9, " ")} ${b.tag_alvo ?? "(skip)"}  cod=${b.codigoSolicitacao.slice(0, 8)} seu=${b.seuNumero}`;
+}
+
+function fmtGroup(g: ContactGroup): string {
+	const status = g.needs_apply
+		? "APPLY"
+		: g.tags_a_remover.length > 0
+			? "CLEANUP"
+			: "NO-OP";
+	const contato = g.contato_existe
+		? `#${g.contato_id?.slice(0, 12) ?? "?"} ${g.contato_nome_existente ?? ""}`
+		: "NOVO";
+	const atual = g.current_boleto_tags.length > 0 ? `[${g.current_boleto_tags.join(",")}]` : "[]";
+	const remove = g.tags_a_remover.length > 0 ? ` rem=[${g.tags_a_remover.join(",")}]` : "";
+	const nomes = g.pagador_nomes.join(" | ");
+	const warn = g.warning ? ` ⚠${g.warning}` : "";
+	return `  [${status}] ${g.telefone_norm}  ${contato}\n    alvo=${g.tag_alvo}  atual=${atual}${remove}  boletos=${g.boletos.length}  nomes="${nomes}"${warn}`;
 }
 
 interface RunSummary {
 	dry_run: boolean;
-	total: number;
-	skipped: number;
-	would_create: number;
-	would_apply: number;
-	would_remove: number;
+	total_boletos: number;
+	total_groups: number;
+	groups_apply: number;
+	groups_cleanup_only: number;
+	groups_noop: number;
+	contacts_to_create: number;
+	tags_to_apply: number;
+	tags_to_remove: number;
+	boletos_skipped: number;
 	by_tag: Record<string, number>;
 }
 
-function summarize(plan: PlanItem[], dryRun: boolean): RunSummary {
+function summarize(plan: Plan, dryRun: boolean): RunSummary {
 	const by_tag: Record<string, number> = {};
-	let skipped = 0;
-	let wouldCreate = 0;
-	let wouldApply = 0;
-	let wouldRemove = 0;
-	for (const i of plan) {
-		if (!i.tag_alvo || i.skip_reason) {
-			skipped++;
-			continue;
+	let groupsApply = 0;
+	let groupsCleanup = 0;
+	let groupsNoop = 0;
+	let toCreate = 0;
+	let tagsApply = 0;
+	let tagsRemove = 0;
+	let totalBoletos = plan.skipped.length;
+	for (const g of plan.groups) {
+		totalBoletos += g.boletos.length;
+		by_tag[g.tag_alvo] = (by_tag[g.tag_alvo] ?? 0) + 1;
+		if (g.needs_apply) {
+			groupsApply++;
+			tagsApply++;
+			if (!g.contato_existe) toCreate++;
+		} else if (g.tags_a_remover.length > 0) {
+			groupsCleanup++;
+		} else {
+			groupsNoop++;
 		}
-		by_tag[i.tag_alvo] = (by_tag[i.tag_alvo] ?? 0) + 1;
-		wouldApply++;
-		wouldRemove += i.tags_a_remover.length;
-		if (!i.contato_existe) wouldCreate++;
+		tagsRemove += g.tags_a_remover.length;
 	}
 	return {
 		dry_run: dryRun,
-		total: plan.length,
-		skipped,
-		would_create: wouldCreate,
-		would_apply: wouldApply,
-		would_remove: wouldRemove,
+		total_boletos: totalBoletos,
+		total_groups: plan.groups.length,
+		groups_apply: groupsApply,
+		groups_cleanup_only: groupsCleanup,
+		groups_noop: groupsNoop,
+		contacts_to_create: toCreate,
+		tags_to_apply: tagsApply,
+		tags_to_remove: tagsRemove,
+		boletos_skipped: plan.skipped.length,
 		by_tag,
 	};
 }
@@ -469,30 +631,55 @@ interface CmdOpts {
 
 function cmdPreview(opts: CmdOpts): void {
 	const today = todayISO();
-	const plan = buildPlan(today);
+	const rank = loadTagRank();
+	const plan = buildPlan(today, rank);
 	const summary = summarize(plan, true);
 
 	if (opts.json) {
-		process.stdout.write(`${JSON.stringify({ today, summary, plan }, null, 2)}\n`);
+		process.stdout.write(`${JSON.stringify({ summary, plan, rank }, null, 2)}\n`);
 		return;
 	}
 
 	process.stdout.write(`régua pré-vencimento — preview (dry-run)\n`);
-	process.stdout.write(`hoje=${today}  janela=${today} → ${addDaysISO(today, 7)}\n`);
-	process.stdout.write(`boletos elegíveis: ${plan.length}\n\n`);
-	for (const i of plan) process.stdout.write(`${fmtItem(i)}\n`);
+	process.stdout.write(`pipeline=${PIPELINE_ID}\n`);
 	process.stdout.write(
-		`\nresumo: aplicaria ${summary.would_apply} tag(s) em ${summary.would_apply - summary.would_create} contato(s) existentes + ${summary.would_create} novo(s); removeria ${summary.would_remove} tag(s) obsoleta(s); pulou ${summary.skipped}.\n`,
+		`prioridade tags: ${ALL_TAGS.map((t) => `${t}=${rank[t]}`).join(", ")}\n`,
+	);
+	process.stdout.write(`hoje=${plan.today}  janela=${plan.today} → ${plan.janela_fim}\n`);
+	process.stdout.write(
+		`grupos: ${plan.groups.length}  (apply=${summary.groups_apply}, cleanup-only=${summary.groups_cleanup_only}, no-op=${summary.groups_noop})\n`,
+	);
+	process.stdout.write(`boletos pulados: ${plan.skipped.length}\n\n`);
+
+	if (plan.groups.length > 0) {
+		process.stdout.write(`grupos por contato:\n`);
+		for (const g of plan.groups) {
+			process.stdout.write(`${fmtGroup(g)}\n`);
+			for (const b of g.boletos) process.stdout.write(`${fmtBoleto(b)}\n`);
+		}
+	}
+
+	if (plan.skipped.length > 0) {
+		process.stdout.write(`\nboletos pulados:\n`);
+		for (const s of plan.skipped) {
+			process.stdout.write(
+				`  ${s.boleto.data_vencimento} d=${s.boleto.dias_ate_venc} ${s.boleto.pagador_nome} cod=${s.boleto.codigoSolicitacao.slice(0, 8)} — ${s.reason}\n`,
+			);
+		}
+	}
+
+	process.stdout.write(
+		`\nresumo: aplicaria ${summary.tags_to_apply} tag(s) (${summary.contacts_to_create} contato(s) novo(s)); removeria ${summary.tags_to_remove} tag(s) obsoleta(s); ${summary.groups_noop} grupo(s) já em estado correto.\n`,
 	);
 	for (const [t, n] of Object.entries(summary.by_tag)) {
-		process.stdout.write(`  ${t}: ${n}\n`);
+		process.stdout.write(`  ${t}: ${n} contato(s)\n`);
 	}
 }
 
 function cmdApply(opts: CmdOpts): void {
 	const today = todayISO();
 	const runId = `run_${today}_${Date.now()}`;
-	const log = readLog();
+	const rank = loadTagRank();
 
 	appendLog({
 		ts: new Date().toISOString(),
@@ -500,87 +687,69 @@ function cmdApply(opts: CmdOpts): void {
 		run_date: today,
 		action: "run-start",
 		dry_run: false,
+		pipeline_id: PIPELINE_ID,
+		tag_rank: rank,
 		message: "régua pré-vencimento iniciada",
 	});
 
-	const plan = buildPlan(today);
+	const plan = buildPlan(today, rank);
 	const result = {
 		applied: [] as Array<{ contact: string; tag: Tag; created: boolean }>,
 		removed: [] as Array<{ contact: string; tag: Tag }>,
-		skipped: [] as Array<{ codigoSolicitacao: string; reason: string }>,
-		errors: [] as Array<{ codigoSolicitacao: string; error: string }>,
+		noop: [] as Array<{ contact: string; tag: Tag }>,
+		skipped: [] as Array<{ ref: string; reason: string }>,
+		errors: [] as Array<{ ref: string; error: string }>,
 	};
 
-	for (const i of plan) {
-		if (!i.tag_alvo) {
-			result.skipped.push({
-				codigoSolicitacao: i.codigoSolicitacao,
-				reason: i.skip_reason ?? "sem-tag",
-			});
-			appendLog({
-				ts: new Date().toISOString(),
-				run_id: runId,
-				run_date: today,
-				action: "boleto-skipped",
-				dry_run: false,
-				codigoSolicitacao: i.codigoSolicitacao,
-				seuNumero: i.seuNumero,
-				nome: i.pagador_nome,
-				dias_ate_venc: i.dias_ate_venc,
-				message: i.skip_reason ?? "sem-tag",
-			});
-			continue;
-		}
+	// boletos sem grupo (skipped na fase de planejamento)
+	for (const s of plan.skipped) {
+		result.skipped.push({ ref: s.boleto.codigoSolicitacao, reason: s.reason });
+		appendLog({
+			ts: new Date().toISOString(),
+			run_id: runId,
+			run_date: today,
+			action: "boleto-skipped",
+			dry_run: false,
+			codigoSolicitacao: s.boleto.codigoSolicitacao,
+			seuNumero: s.boleto.seuNumero,
+			nome: s.boleto.pagador_nome,
+			dias_ate_venc: s.boleto.dias_ate_venc,
+			message: s.reason,
+		});
+	}
 
-		if (i.skip_reason || !i.telefone_norm) {
-			result.skipped.push({
-				codigoSolicitacao: i.codigoSolicitacao,
-				reason: i.skip_reason ?? "sem-telefone-resolvivel",
-			});
-			appendLog({
-				ts: new Date().toISOString(),
-				run_id: runId,
-				run_date: today,
-				action: "warn",
-				dry_run: false,
-				codigoSolicitacao: i.codigoSolicitacao,
-				seuNumero: i.seuNumero,
-				nome: i.pagador_nome,
-				dias_ate_venc: i.dias_ate_venc,
-				tag_alvo: i.tag_alvo,
-				message: i.skip_reason ?? "sem-telefone-resolvivel",
-			});
-			continue;
-		}
+	for (const g of plan.groups) {
+		const idem = `${g.telefone_norm}:${g.tag_alvo}:${today}`;
+		const codigos = g.boletos.map((b) => b.codigoSolicitacao);
 
-		const idem = `${i.telefone_norm}:${i.tag_alvo}:${i.data_vencimento}`;
-		if (alreadyAppliedToday(idem, today, log)) {
-			result.skipped.push({
-				codigoSolicitacao: i.codigoSolicitacao,
-				reason: "ja-aplicada-hoje",
-			});
+		// Idempotência por tags atuais (regra 5): se já está no estado desejado, no-op.
+		if (!g.needs_apply && g.tags_a_remover.length === 0) {
+			result.noop.push({ contact: g.contato_id ?? g.telefone_norm, tag: g.tag_alvo });
 			appendLog({
 				ts: new Date().toISOString(),
 				run_id: runId,
 				run_date: today,
-				action: "tag-skipped-already-applied",
+				action: "tag-noop",
 				dry_run: false,
-				codigoSolicitacao: i.codigoSolicitacao,
-				telefone: i.telefone_norm,
-				nome: i.pagador_nome,
-				tag_alvo: i.tag_alvo,
+				telefone: g.telefone_norm,
+				nome: g.contato_nome_existente ?? g.pagador_nomes[0] ?? "",
+				tag_alvo: g.tag_alvo,
 				idempotency_key: idem,
+				codigos,
+				message: "ja-em-estado-correto",
 			});
 			continue;
 		}
 
-		let contactRef = i.contato_id ?? i.telefone_norm;
+		// Cria contato se faltar.
+		let contactRef = g.contato_id ?? g.telefone_norm;
 		let created = false;
-		if (!i.contato_existe) {
-			const c = createContact(i.telefone_norm, i.pagador_nome || "Cliente SDE", false);
+		if (!g.contato_existe) {
+			const nomeNovo = g.pagador_nomes[0] || "Cliente SDE";
+			const c = createContact(g.telefone_norm, nomeNovo, false);
 			if (!c.ok) {
 				result.errors.push({
-					codigoSolicitacao: i.codigoSolicitacao,
+					ref: g.telefone_norm,
 					error: `contact-add:${c.error}`,
 				});
 				appendLog({
@@ -589,62 +758,64 @@ function cmdApply(opts: CmdOpts): void {
 					run_date: today,
 					action: "error",
 					dry_run: false,
-					codigoSolicitacao: i.codigoSolicitacao,
-					telefone: i.telefone_norm,
-					nome: i.pagador_nome,
+					telefone: g.telefone_norm,
+					nome: nomeNovo,
+					codigos,
 					message: `contact-add falhou: ${c.error}`,
 				});
 				continue;
 			}
 			created = true;
-			contactRef = i.telefone_norm;
+			contactRef = g.telefone_norm;
 			appendLog({
 				ts: new Date().toISOString(),
 				run_id: runId,
 				run_date: today,
 				action: "contact-created",
 				dry_run: false,
-				telefone: i.telefone_norm,
-				nome: i.pagador_nome,
+				telefone: g.telefone_norm,
+				nome: nomeNovo,
 			});
 		}
 
-		const tagRes = tagContact(contactRef, i.tag_alvo, false);
-		if (!tagRes.ok) {
-			result.errors.push({
-				codigoSolicitacao: i.codigoSolicitacao,
-				error: `tag:${tagRes.error}`,
-			});
+		// Aplica a tag alvo (se faltar).
+		if (g.needs_apply) {
+			const tagRes = tagContact(contactRef, g.tag_alvo, false);
+			if (!tagRes.ok) {
+				result.errors.push({
+					ref: contactRef,
+					error: `tag:${tagRes.error}`,
+				});
+				appendLog({
+					ts: new Date().toISOString(),
+					run_id: runId,
+					run_date: today,
+					action: "error",
+					dry_run: false,
+					telefone: g.telefone_norm,
+					tag_alvo: g.tag_alvo,
+					codigos,
+					message: `tag falhou: ${tagRes.error}`,
+				});
+				continue;
+			}
+			result.applied.push({ contact: contactRef, tag: g.tag_alvo, created });
 			appendLog({
 				ts: new Date().toISOString(),
 				run_id: runId,
 				run_date: today,
-				action: "error",
+				action: "tag-applied",
 				dry_run: false,
-				codigoSolicitacao: i.codigoSolicitacao,
-				telefone: i.telefone_norm,
-				tag_alvo: i.tag_alvo,
-				message: `tag falhou: ${tagRes.error}`,
+				telefone: g.telefone_norm,
+				nome: g.contato_nome_existente ?? g.pagador_nomes[0] ?? "",
+				tag_alvo: g.tag_alvo,
+				idempotency_key: idem,
+				codigos,
 			});
-			continue;
 		}
-		result.applied.push({ contact: contactRef, tag: i.tag_alvo, created });
-		appendLog({
-			ts: new Date().toISOString(),
-			run_id: runId,
-			run_date: today,
-			action: "tag-applied",
-			dry_run: false,
-			codigoSolicitacao: i.codigoSolicitacao,
-			seuNumero: i.seuNumero,
-			telefone: i.telefone_norm,
-			nome: i.pagador_nome,
-			dias_ate_venc: i.dias_ate_venc,
-			tag_alvo: i.tag_alvo,
-			idempotency_key: idem,
-		});
 
-		for (const obsTag of i.tags_a_remover) {
+		// Remove tags boleto:* obsoletas do contato (regra 4).
+		for (const obsTag of g.tags_a_remover) {
 			const r = untagContact(contactRef, obsTag, false);
 			if (!r.ok) {
 				appendLog({
@@ -653,8 +824,7 @@ function cmdApply(opts: CmdOpts): void {
 					run_date: today,
 					action: "warn",
 					dry_run: false,
-					codigoSolicitacao: i.codigoSolicitacao,
-					telefone: i.telefone_norm,
+					telefone: g.telefone_norm,
 					message: `untag ${obsTag} falhou: ${r.error}`,
 				});
 				continue;
@@ -666,8 +836,7 @@ function cmdApply(opts: CmdOpts): void {
 				run_date: today,
 				action: "tag-removed",
 				dry_run: false,
-				codigoSolicitacao: i.codigoSolicitacao,
-				telefone: i.telefone_norm,
+				telefone: g.telefone_norm,
 				tag_alvo: obsTag,
 			});
 		}
@@ -679,7 +848,7 @@ function cmdApply(opts: CmdOpts): void {
 		run_date: today,
 		action: "run-end",
 		dry_run: false,
-		message: `applied=${result.applied.length} removed=${result.removed.length} skipped=${result.skipped.length} errors=${result.errors.length}`,
+		message: `applied=${result.applied.length} removed=${result.removed.length} noop=${result.noop.length} skipped=${result.skipped.length} errors=${result.errors.length}`,
 	});
 
 	if (opts.json) {
@@ -694,12 +863,13 @@ function cmdApply(opts: CmdOpts): void {
 	process.stdout.write(`aplicadas: ${result.applied.length}\n`);
 	process.stdout.write(`  (criou ${result.applied.filter((a) => a.created).length} contato(s))\n`);
 	process.stdout.write(`removidas: ${result.removed.length}\n`);
+	process.stdout.write(`no-op:     ${result.noop.length}\n`);
 	process.stdout.write(`puladas:   ${result.skipped.length}\n`);
 	process.stdout.write(`erros:     ${result.errors.length}\n`);
 	if (result.errors.length > 0) {
 		process.stdout.write(`\nerros:\n`);
 		for (const e of result.errors) {
-			process.stdout.write(`  ${e.codigoSolicitacao}: ${e.error}\n`);
+			process.stdout.write(`  ${e.ref}: ${e.error}\n`);
 		}
 		process.exit(2);
 	}
@@ -729,9 +899,10 @@ function cmdStatus(opts: CmdOpts): void {
 	const end = lastRun.find((e) => e.action === "run-end");
 	const applied = lastRun.filter((e) => e.action === "tag-applied").length;
 	const removed = lastRun.filter((e) => e.action === "tag-removed").length;
+	const noop = lastRun.filter((e) => e.action === "tag-noop").length;
 	const created = lastRun.filter((e) => e.action === "contact-created").length;
 	const skipped = lastRun.filter(
-		(e) => e.action === "boleto-skipped" || e.action === "tag-skipped-already-applied",
+		(e) => e.action === "boleto-skipped" || e.action === "group-skipped",
 	).length;
 	const warns = lastRun.filter((e) => e.action === "warn").length;
 	const errors = lastRun.filter((e) => e.action === "error").length;
@@ -742,6 +913,7 @@ function cmdStatus(opts: CmdOpts): void {
 		ended_at: end?.ts ?? null,
 		applied,
 		removed,
+		noop,
 		contacts_created: created,
 		skipped,
 		warns,
@@ -763,6 +935,7 @@ function cmdStatus(opts: CmdOpts): void {
 	process.stdout.write(`  encerrado: ${out.ended_at ?? "(incompleto)"}\n`);
 	process.stdout.write(`  tags aplicadas: ${out.applied}\n`);
 	process.stdout.write(`  tags removidas: ${out.removed}\n`);
+	process.stdout.write(`  no-op (já correto): ${out.noop}\n`);
 	process.stdout.write(`  contatos criados: ${out.contacts_created}\n`);
 	process.stdout.write(`  pulados: ${out.skipped}\n`);
 	process.stdout.write(`  warns: ${out.warns}\n`);
@@ -779,22 +952,27 @@ program
 			"Régua pré-vencimento de boletos SDE.",
 			"",
 			"Operado pelo jarvis-financ (cron 6h BRT). Lê boletos A_RECEBER do Banco Inter,",
-			"resolve telefone via Tiny, sincroniza tags boleto:* no Ravi:",
-			"  dias_ate_venc == 0  → boleto:vence-hoje",
-			"  dias_ate_venc == 2  → boleto:vence-em-2d",
-			"  dias_ate_venc >= 3  → boleto:emitido",
+			"resolve telefone via Tiny, agrupa por contato e sincroniza UMA tag boleto:*",
+			"por contato (a mais crítica entre seus boletos):",
+			"  dias_ate_venc == 0   → boleto:vence-hoje",
+			"  dias_ate_venc ∈ 1..2 → boleto:vence-em-2d",
+			"  dias_ate_venc >= 3   → boleto:emitido",
 			"",
-			"Idempotência: dedup por (telefone, tag, data_venc) no JSONL.",
-			`Log: ${LOG_FILE}`,
+			`A prioridade entre tags é lida do metadado do pipeline ${PIPELINE_ID}`,
+			"(regua_tags[].priority) em runtime — override via env SDE_COBRANCA_PIPELINE_ID.",
 			"",
-			"Spec: /home/ravi/main-kimi/specs/sde-regua-pre-vencimento.md §4.1",
+			"Idempotência: lê tags atuais do contato (policy.tags) e só atua se houver",
+			"divergência. Tags boleto:* obsoletas são removidas a cada run.",
+			`Log JSONL: ${LOG_FILE}`,
+			"",
+			"Spec: /home/ravi/main-kimi/specs/sde-regua-pre-vencimento.md §3.4 + §4.1",
 		].join("\n"),
 	)
 	.version(VERSION);
 
 program
 	.command("preview")
-	.description("Lista boletos elegíveis e o que seria feito (dry-run, sem efeitos)")
+	.description("Lista grupos por contato e o que seria feito (dry-run, sem efeitos)")
 	.option("--json", "Output JSON em stdout")
 	.action((opts: CmdOpts) => {
 		try {
@@ -807,7 +985,7 @@ program
 
 program
 	.command("apply")
-	.description("Cria contatos faltantes, aplica tags alvo e remove tags obsoletas")
+	.description("Cria contatos faltantes, aplica tag mais crítica por contato e remove obsoletas")
 	.option("--json", "Output JSON em stdout")
 	.action((opts: CmdOpts) => {
 		try {
