@@ -104,6 +104,34 @@ interface RaviCrmTaskCreateResp {
 	reason?: string;
 }
 
+interface PipelineFirstContactRule {
+	control_tag: string;
+	intro?: string;
+	template?: string;
+	placeholders?: Record<string, string>;
+}
+
+interface PipelineMessageRule {
+	prefix?: string;
+	first_contact?: PipelineFirstContactRule;
+}
+
+interface RaviCrmPipelineShowResp {
+	pipeline?: {
+		id?: string;
+		name?: string;
+		metadata?: {
+			message_rule?: PipelineMessageRule;
+			[k: string]: unknown;
+		};
+	};
+}
+
+interface RaviContactsShowResp {
+	policy?: { tags?: string[] };
+	tags?: string[];
+}
+
 interface BoletoItem {
 	codigoSolicitacao: string;
 	seuNumero: string;
@@ -149,6 +177,8 @@ interface TaskMetadata {
 	valor: string;
 	pagador_nome: string;
 	seu_numero: string;
+	first_contact?: boolean;
+	apply_tag_on_send?: string;
 }
 
 interface BoletoSkip {
@@ -354,6 +384,33 @@ function findContactByPhone(phoneNorm: string): ContactLookup {
 	return { id, displayName };
 }
 
+function loadContactTags(contactId: string): string[] {
+	try {
+		const resp = jsonCmd<RaviContactsShowResp>("ravi", [
+			"contacts",
+			"show",
+			contactId,
+		]);
+		return resp.policy?.tags ?? resp.tags ?? [];
+	} catch {
+		return [];
+	}
+}
+
+function loadPipelineRule(slug: string): PipelineMessageRule | null {
+	try {
+		const resp = jsonCmd<RaviCrmPipelineShowResp>("ravi", [
+			"crm",
+			"pipeline",
+			"show",
+			slug,
+		]);
+		return resp.pipeline?.metadata?.message_rule ?? null;
+	} catch {
+		return null;
+	}
+}
+
 function createContact(
 	phone: string,
 	name: string,
@@ -482,17 +539,23 @@ function firstName(full: string): string {
 	return parts[0] ?? full;
 }
 
-function buildMessage(
-	displayName: string,
-	valor: string,
-	dataVenc: string,
-	tipo: TipoNotificacao,
-): string {
-	const valorFmt = fmtValor(valor);
-	const dataFmt = fmtDateBR(dataVenc);
-	const oi = `Oi, ${firstName(displayName)}! Tudo bem?`;
+const DEFAULT_PREFIX = "**Lucia - Financeiro:**\n";
+
+interface BoletoContext {
+	displayName: string;
+	valor: string;
+	dataVencimento: string;
+	tipo: TipoNotificacao;
+	codigoSolicitacao: string;
+	seuNumero: string;
+}
+
+function buildCorpo(ctx: BoletoContext): string {
+	const valorFmt = fmtValor(ctx.valor);
+	const dataFmt = fmtDateBR(ctx.dataVencimento);
+	const oi = `Oi, ${firstName(ctx.displayName)}! Tudo bem?`;
 	let linha: string;
-	switch (tipo) {
+	switch (ctx.tipo) {
 		case "VENCIMENTO_HOJE":
 			linha = `Seu boleto no valor de R$ ${valorFmt} vence *hoje* (${dataFmt}).`;
 			break;
@@ -503,13 +566,83 @@ function buildMessage(
 			linha = `Acabamos de emitir seu boleto no valor de R$ ${valorFmt}, com vencimento em ${dataFmt}.`;
 			break;
 	}
-	const corpo = `${oi}\n\nAqui é a Lucia do financeiro do Setor da Embalagem. ${linha}\n\nSe precisar do link de pagamento ou de alguma ajuda, é só me avisar. 🧡`;
-	return `**Lucia - Financeiro:**\n${corpo}`;
+	return `${oi}\n\n${linha}\n\nSe precisar do link de pagamento ou de alguma ajuda, é só me avisar. 🧡`;
+}
+
+function resolvePlaceholderPath(ctx: BoletoContext, path: string): string {
+	const [raw, fmt] = path.split("|");
+	const key = raw?.trim();
+	if (!key) return "";
+	let value: string;
+	switch (key) {
+		case "cobranca.seuNumero":
+		case "seuNumero":
+			value = ctx.seuNumero;
+			break;
+		case "cobranca.codigoSolicitacao":
+		case "codigoSolicitacao":
+			value = ctx.codigoSolicitacao;
+			break;
+		case "cobranca.dataVencimento":
+		case "dataVencimento":
+			value = ctx.dataVencimento;
+			break;
+		case "cobranca.valor":
+		case "valor":
+			value = ctx.valor;
+			break;
+		case "displayName":
+		case "cliente.displayName":
+			value = ctx.displayName;
+			break;
+		default:
+			return "";
+	}
+	const f = fmt?.trim();
+	if (f === "dd/mm/yyyy" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+		return fmtDateBR(value);
+	}
+	if (f === "currency-brl") return fmtValor(value);
+	return value;
+}
+
+function renderTemplate(
+	tpl: string,
+	ctx: BoletoContext,
+	placeholders: Record<string, string> | undefined,
+): string {
+	if (!placeholders) return tpl;
+	let out = tpl;
+	for (const [key, path] of Object.entries(placeholders)) {
+		out = out.split(`{{${key}}}`).join(resolvePlaceholderPath(ctx, path));
+	}
+	return out;
+}
+
+function buildMessage(
+	ctx: BoletoContext,
+	rule: PipelineMessageRule | null,
+	isFirstContact: boolean,
+): string {
+	const prefix = rule?.prefix ?? DEFAULT_PREFIX;
+	const first = rule?.first_contact;
+
+	if (isFirstContact && first?.template) {
+		return renderTemplate(first.template, ctx, first.placeholders);
+	}
+
+	const corpo = buildCorpo(ctx);
+	if (isFirstContact && first?.intro) {
+		return `${prefix}${first.intro}${corpo}`;
+	}
+	return `${prefix}${corpo}`;
 }
 
 function buildPlan(today: string): Plan {
 	const janela_fim = addDaysISO(today, 2);
 	const boletos = fetchBoletos({ inicio: today, fim: janela_fim });
+	const rule = loadPipelineRule(PIPELINE_SLUG);
+	const controlTag = rule?.first_contact?.control_tag ?? null;
 
 	const items: BoletoItem[] = [];
 	for (const b of boletos) {
@@ -563,14 +696,23 @@ function buildPlan(today: string): Plan {
 		const lookup = findContactByPhone(it.telefone_norm);
 		const display = lookup.displayName ?? it.tiny_nome ?? it.pagador_nome_inter ?? "Cliente SDE";
 
+		let isFirstContact = true;
+		if (controlTag && lookup.id) {
+			const tags = loadContactTags(lookup.id);
+			if (tags.includes(controlTag)) isFirstContact = false;
+		}
+
 		const data_envio = today;
 		const due_iso = `${data_envio}T09:00:00-03:00`;
-		const message = buildMessage(
-			display,
-			it.valor,
-			it.data_vencimento,
-			it.tipo_notificacao,
-		);
+		const ctx: BoletoContext = {
+			displayName: display,
+			valor: it.valor,
+			dataVencimento: it.data_vencimento,
+			tipo: it.tipo_notificacao,
+			codigoSolicitacao: it.codigoSolicitacao,
+			seuNumero: it.seuNumero,
+		};
+		const message = buildMessage(ctx, rule, isFirstContact);
 		const valorFmt = fmtValor(it.valor);
 		const title = `Lembrete boleto ${display} - venc ${fmtDateBR(it.data_vencimento)}`;
 		const body = `Boleto R$ ${valorFmt} vence em ${fmtDateBR(it.data_vencimento)}. Notificacao ${it.tipo_notificacao}.`;
@@ -587,6 +729,10 @@ function buildPlan(today: string): Plan {
 			pagador_nome: it.pagador_nome_inter,
 			seu_numero: it.seuNumero,
 		};
+		if (isFirstContact && controlTag) {
+			metadata.first_contact = true;
+			metadata.apply_tag_on_send = controlTag;
+		}
 		const idempotency_key = `jarvis-financ:${it.codigoSolicitacao}:${it.tipo_notificacao}:${it.data_vencimento}`;
 
 		tasks.push({
