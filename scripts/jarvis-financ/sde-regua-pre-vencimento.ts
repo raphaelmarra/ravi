@@ -24,6 +24,15 @@
 //   --idempotency-key = jarvis-financ:<codigoSolicitacao>:<tipo>:<data_venc>
 //   Não duplica task para mesmo boleto + tipo.
 //
+// First-contact rule (spec crm/cobranca/regra-first-contact-lucia):
+//   - lê metadata.message_rule do pipeline (prefix + first_contact)
+//   - contato sem first_contact.control_tag (ex: equipe:lucia):
+//       usa first_contact.template (modo template) OU intro+corpo (modo intro);
+//       seta metadata.first_contact=true e apply_tag_on_send=<control_tag>;
+//       sde-dispatcher consome apply_tag_on_send e aplica a tag APÓS envio.
+//   - contato com a tag: corpo padrão sem reapresentação.
+//   - fallback seguro: pipeline sem metadado → DEFAULT_PREFIX + corpo padrão.
+//
 // Subcomandos:
 //   preview   dry-run; lista tasks que seriam criadas
 //   apply     cria tasks CRM e escreve JSONL
