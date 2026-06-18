@@ -20,8 +20,6 @@ const SAFE_EXECUTABLES = [
   "uniq",
   "wc",
   "xargs",
-  // PATCH 2026-06-18: wildcard executavel p/ acesso total dos agentes (bug do materializer em correcao). Reverter removendo esta linha.
-  "*",
 ];
 
 /**
