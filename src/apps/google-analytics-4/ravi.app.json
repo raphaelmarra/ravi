@@ -1,0 +1,1850 @@
+{
+  "schema": "ravi.app/v1",
+  "id": "google-analytics-4",
+  "name": "Google Analytics 4",
+  "version": "0.2.0-runtime-hardening",
+  "description": "Consulta relatórios e administra configurações do Google Analytics 4 via APIs oficiais.",
+  "interfaces": {
+    "cli": {
+      "command": "ravi ga4",
+      "json": true,
+      "health": "ravi apps check google-analytics-4 --json"
+    },
+    "ui": {
+      "routes": [
+        {
+          "id": "main",
+          "path": "/apps/google-analytics-4",
+          "label": "Google Analytics 4",
+          "icon": "chart-no-axes-combined",
+          "view": "contract"
+        }
+      ],
+      "views": [
+        {
+          "id": "contract",
+          "type": "detail",
+          "title": "Google Analytics 4",
+          "density": "compact",
+          "query": {
+            "operation": "google-analytics-4.show"
+          },
+          "actions": [
+            {
+              "id": "check",
+              "label": "Validar app",
+              "icon": "shield-check",
+              "operation": "google-analytics-4.check",
+              "placement": "toolbar"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "operations": {
+    "google-analytics-4.help": {
+      "interface": "builtin",
+      "handler": "apps.help",
+      "mutating": false
+    },
+    "google-analytics-4.show": {
+      "interface": "builtin",
+      "handler": "apps.manifest.show",
+      "mutating": false
+    },
+    "google-analytics-4.check": {
+      "interface": "builtin",
+      "handler": "apps.manifest.check",
+      "mutating": false
+    },
+    "google-analytics-4.report": {
+      "interface": "cli",
+      "command": "ravi ga4 report --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.realtime": {
+      "interface": "cli",
+      "command": "ravi ga4 realtime --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.top-pages": {
+      "interface": "cli",
+      "command": "ravi ga4 top-pages --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.top-sources": {
+      "interface": "cli",
+      "command": "ravi ga4 top-sources --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.audience": {
+      "interface": "cli",
+      "command": "ravi ga4 audience --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.ecommerce": {
+      "interface": "cli",
+      "command": "ravi ga4 ecommerce --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.trends": {
+      "interface": "cli",
+      "command": "ravi ga4 trends --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.metadata": {
+      "interface": "cli",
+      "command": "ravi ga4 metadata --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.check-compatibility": {
+      "interface": "cli",
+      "command": "ravi ga4 check-compatibility --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.batch-report": {
+      "interface": "cli",
+      "command": "ravi ga4 batch-report --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.pivot-report": {
+      "interface": "cli",
+      "command": "ravi ga4 pivot-report --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.batch-pivot-report": {
+      "interface": "cli",
+      "command": "ravi ga4 batch-pivot-report --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.audience-export-create": {
+      "interface": "cli",
+      "command": "ravi ga4 audience-export-create --json {args}",
+      "mutating": true,
+      "risk": "write",
+      "permission": "ga4:audience-exports:write",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": false,
+        "mutating": true,
+        "destructive": false,
+        "idempotent": false,
+        "dryRunSupported": true,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high",
+        "gates": [
+          "dry-run-only",
+          "app-boundary:execute:app:google-analytics-4",
+          "hitl:required",
+          "confirmation:required",
+          "credential:broker-only",
+          "retry:disabled"
+        ]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false; writes dry-run-only",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.audience-export-get": {
+      "interface": "cli",
+      "command": "ravi ga4 audience-export-get --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.audience-export-list": {
+      "interface": "cli",
+      "command": "ravi ga4 audience-export-list --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.audience-export-query": {
+      "interface": "cli",
+      "command": "ravi ga4 audience-export-query --json {args}",
+      "mutating": false,
+      "permission": "ga4:data:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-account-summaries": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-account-summaries --json {args}",
+      "mutating": false,
+      "permission": "ga4:admin:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-list": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-list --json {args}",
+      "mutating": false,
+      "permission": "ga4:admin:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-get": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-get --json {args}",
+      "mutating": false,
+      "permission": "ga4:admin:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-setting-get": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-setting-get --json {args}",
+      "mutating": false,
+      "permission": "ga4:admin:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-global-site-tag": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-global-site-tag --json {args}",
+      "mutating": false,
+      "permission": "ga4:admin:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-change-history": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-change-history --json {args}",
+      "mutating": false,
+      "permission": "ga4:admin:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-access-report": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-access-report --json {args}",
+      "mutating": false,
+      "permission": "ga4:admin:read",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": true,
+        "mutating": false,
+        "destructive": false,
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low",
+        "gates": ["app-boundary:use:app:google-analytics-4", "credential:broker-only", "quota:conservative-no-retry"]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false until numeric quota/throttle is approved",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-create": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-create --json {args}",
+      "mutating": true,
+      "risk": "write",
+      "permission": "ga4:admin:write",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": false,
+        "mutating": true,
+        "destructive": false,
+        "idempotent": false,
+        "dryRunSupported": true,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high",
+        "gates": [
+          "dry-run-only",
+          "app-boundary:execute:app:google-analytics-4",
+          "hitl:required",
+          "confirmation:required",
+          "credential:broker-only",
+          "retry:disabled"
+        ]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false; writes dry-run-only",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-update": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-update --json {args}",
+      "mutating": true,
+      "risk": "write",
+      "permission": "ga4:admin:write",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": false,
+        "mutating": true,
+        "destructive": false,
+        "idempotent": false,
+        "dryRunSupported": true,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high",
+        "gates": [
+          "dry-run-only",
+          "app-boundary:execute:app:google-analytics-4",
+          "hitl:required",
+          "confirmation:required",
+          "credential:broker-only",
+          "retry:disabled"
+        ]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false; writes dry-run-only",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-setting-update": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-setting-update --json {args}",
+      "mutating": true,
+      "risk": "write",
+      "permission": "ga4:admin:write",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": false,
+        "mutating": true,
+        "destructive": false,
+        "idempotent": false,
+        "dryRunSupported": true,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high",
+        "gates": [
+          "dry-run-only",
+          "app-boundary:execute:app:google-analytics-4",
+          "hitl:required",
+          "confirmation:required",
+          "credential:broker-only",
+          "retry:disabled"
+        ]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false; writes dry-run-only",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-acknowledge-user-data": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-acknowledge-user-data --json {args}",
+      "mutating": true,
+      "risk": "write",
+      "permission": "ga4:admin:write",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": false,
+        "mutating": true,
+        "destructive": false,
+        "idempotent": false,
+        "dryRunSupported": true,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high",
+        "gates": [
+          "dry-run-only",
+          "app-boundary:execute:app:google-analytics-4",
+          "hitl:required",
+          "confirmation:required",
+          "credential:broker-only",
+          "retry:disabled"
+        ]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false; writes dry-run-only",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-delete": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-delete --json {args}",
+      "mutating": true,
+      "risk": "destructive",
+      "permission": "ga4:admin:destructive",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": false,
+        "mutating": true,
+        "destructive": true,
+        "idempotent": false,
+        "dryRunSupported": true,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "destructive",
+        "gates": [
+          "dry-run-only",
+          "app-boundary:execute:app:google-analytics-4",
+          "hitl:required",
+          "confirmation:required",
+          "credential:broker-only",
+          "retry:disabled"
+        ]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false; writes dry-run-only",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    },
+    "google-analytics-4.admin-archive": {
+      "interface": "cli",
+      "command": "ravi ga4 admin-archive --json {args}",
+      "mutating": true,
+      "risk": "destructive",
+      "permission": "ga4:admin:destructive",
+      "json": true,
+      "inputSchema": "schemas/cli-invocation.v1.json",
+      "outputSchema": "schemas/result.v1.json",
+      "safety": {
+        "readOnly": false,
+        "mutating": true,
+        "destructive": true,
+        "idempotent": false,
+        "dryRunSupported": true,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "destructive",
+        "gates": [
+          "dry-run-only",
+          "app-boundary:execute:app:google-analytics-4",
+          "hitl:required",
+          "confirmation:required",
+          "credential:broker-only",
+          "retry:disabled"
+        ]
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1,
+        "baseDelayMs": 250
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "provenance": {
+          "officialUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "evidenceStatus": "official-docs-and-historical-implementation",
+          "owner": "ravi-dev"
+        },
+        "quota": {
+          "status": "unknown",
+          "apiVersion": "Analytics Data API v1beta + Admin API v1beta/v1alpha",
+          "scope": "provider/account/property dependent",
+          "unit": null,
+          "window": null,
+          "burst": null,
+          "headers": ["Retry-After when returned by Google"],
+          "documentedError": "429/403 provider quota or permission failures possible",
+          "retryPolicy": "retryAutomatically=false; writes dry-run-only",
+          "sourceUrls": [
+            "https://developers.google.com/analytics/devguides/reporting/data/v1",
+            "https://developers.google.com/analytics/devguides/config/admin/v1"
+          ],
+          "verifiedAt": "2026-07-22",
+          "owner": "ravi-dev",
+          "liveGate": "no-go-until-approved-throttle"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "required": ["ga4:data:read"],
+    "optional": ["ga4:admin:read"],
+    "mutating": ["ga4:audience-exports:write", "ga4:admin:write", "ga4:admin:destructive"]
+  },
+  "storage": {
+    "sqlite": [],
+    "files": []
+  },
+  "artifacts": [],
+  "events": {
+    "emits": [],
+    "consumes": []
+  },
+  "skills": ["ravi-system-ga4"],
+  "health": {
+    "checks": [
+      {
+        "id": "manifest",
+        "type": "builtin",
+        "required": true,
+        "sideEffectFree": true,
+        "handler": "apps.manifest.check"
+      }
+    ]
+  },
+  "versioning": {
+    "compatibility": "semver",
+    "migrations": [],
+    "providerContracts": {
+      "analyticsData": "v1beta",
+      "analyticsAdminStable": "v1beta",
+      "analyticsAdminPreview": "v1alpha"
+    }
+  },
+  "migration": {
+    "mode": "native-parallel",
+    "legacyCommand": "sde ga4",
+    "legacyStatus": "preserved",
+    "historicalTask": "task-67f4084d",
+    "operationScope": "domain: google-analytics-4 reads nativos primeiro; writes somente contrato/dry-run",
+    "credentialPolicy": "provider=google-analytics, connection=<id>; secrets only through Ravi broker/context; no legacy secret file lookup",
+    "writeExecution": "disabled; mutating operations are dry-run plan only in this source-ready handoff",
+    "cutover": "disabled; runtime promotion/deploy/restart/release require separate protected approval",
+    "quotaPolicy": {
+      "status": "unknown",
+      "liveGate": "no-go-until-approved-throttle",
+      "conservativeThrottle": "concurrency=1; maxAttempts=1; respect Retry-After when future live reads are approved; no automatic write retry"
+    }
+  }
+}
