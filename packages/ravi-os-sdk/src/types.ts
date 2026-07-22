@@ -6053,6 +6053,382 @@ export type FeedbackSendReturn = {
   url: string;
 };
 
+/** Input shape for `ga4.admin-access-report`. */
+export type Ga4AdminAccessReportInput = {
+  connection?: string;
+  entity: string;
+  requestJson?: string;
+};
+
+/** Return shape for `ga4.admin-access-report`. */
+export type Ga4AdminAccessReportReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-account-summaries`. */
+export type Ga4AdminAccountSummariesInput = {
+  connection?: string;
+  limit?: string;
+  pageToken?: string;
+};
+
+/** Return shape for `ga4.admin-account-summaries`. */
+export type Ga4AdminAccountSummariesReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-acknowledge-user-data`. */
+export type Ga4AdminAcknowledgeUserDataInput = {
+  connection?: string;
+  dryRun?: boolean;
+  property: string;
+  requestJson?: string;
+};
+
+/** Return shape for `ga4.admin-acknowledge-user-data`. */
+export type Ga4AdminAcknowledgeUserDataReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-archive`. */
+export type Ga4AdminArchiveInput = {
+  connection?: string;
+  dryRun?: boolean;
+  name: string;
+  resource: string;
+};
+
+/** Return shape for `ga4.admin-archive`. */
+export type Ga4AdminArchiveReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-change-history`. */
+export type Ga4AdminChangeHistoryInput = {
+  account: string;
+  connection?: string;
+  requestJson?: string;
+};
+
+/** Return shape for `ga4.admin-change-history`. */
+export type Ga4AdminChangeHistoryReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-create`. */
+export type Ga4AdminCreateInput = {
+  connection?: string;
+  dryRun?: boolean;
+  parent?: string;
+  requestJson?: string;
+  resource: string;
+};
+
+/** Return shape for `ga4.admin-create`. */
+export type Ga4AdminCreateReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-delete`. */
+export type Ga4AdminDeleteInput = {
+  connection?: string;
+  dryRun?: boolean;
+  name: string;
+  resource: string;
+};
+
+/** Return shape for `ga4.admin-delete`. */
+export type Ga4AdminDeleteReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-get`. */
+export type Ga4AdminGetInput = {
+  connection?: string;
+  name: string;
+  resource: string;
+};
+
+/** Return shape for `ga4.admin-get`. */
+export type Ga4AdminGetReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-global-site-tag`. */
+export type Ga4AdminGlobalSiteTagInput = {
+  connection?: string;
+  "data-stream": string;
+};
+
+/** Return shape for `ga4.admin-global-site-tag`. */
+export type Ga4AdminGlobalSiteTagReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-list`. */
+export type Ga4AdminListInput = {
+  connection?: string;
+  limit?: string;
+  pageToken?: string;
+  parent?: string;
+  resource: string;
+};
+
+/** Return shape for `ga4.admin-list`. */
+export type Ga4AdminListReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-setting-get`. */
+export type Ga4AdminSettingGetInput = {
+  connection?: string;
+  name: string;
+  setting: string;
+};
+
+/** Return shape for `ga4.admin-setting-get`. */
+export type Ga4AdminSettingGetReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-setting-update`. */
+export type Ga4AdminSettingUpdateInput = {
+  connection?: string;
+  dryRun?: boolean;
+  name: string;
+  requestJson?: string;
+  setting: string;
+  updateMask?: string;
+};
+
+/** Return shape for `ga4.admin-setting-update`. */
+export type Ga4AdminSettingUpdateReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.admin-update`. */
+export type Ga4AdminUpdateInput = {
+  connection?: string;
+  dryRun?: boolean;
+  name: string;
+  requestJson?: string;
+  resource: string;
+  updateMask?: string;
+};
+
+/** Return shape for `ga4.admin-update`. */
+export type Ga4AdminUpdateReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.audience`. */
+export type Ga4AudienceInput = {
+  by?: string;
+  connection?: string;
+  days?: string;
+  limit?: string;
+  property: string;
+};
+
+/** Return shape for `ga4.audience`. */
+export type Ga4AudienceReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.audience-export-create`. */
+export type Ga4AudienceExportCreateInput = {
+  connection?: string;
+  dryRun?: boolean;
+  property: string;
+  requestJson?: string;
+};
+
+/** Return shape for `ga4.audience-export-create`. */
+export type Ga4AudienceExportCreateReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.audience-export-get`. */
+export type Ga4AudienceExportGetInput = {
+  connection?: string;
+  name: string;
+};
+
+/** Return shape for `ga4.audience-export-get`. */
+export type Ga4AudienceExportGetReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.audience-export-list`. */
+export type Ga4AudienceExportListInput = {
+  connection?: string;
+  limit?: string;
+  pageToken?: string;
+  property: string;
+};
+
+/** Return shape for `ga4.audience-export-list`. */
+export type Ga4AudienceExportListReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.audience-export-query`. */
+export type Ga4AudienceExportQueryInput = {
+  connection?: string;
+  name: string;
+  requestJson?: string;
+};
+
+/** Return shape for `ga4.audience-export-query`. */
+export type Ga4AudienceExportQueryReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.batch-pivot-report`. */
+export type Ga4BatchPivotReportInput = {
+  connection?: string;
+  property: string;
+  requestJson?: string;
+};
+
+/** Return shape for `ga4.batch-pivot-report`. */
+export type Ga4BatchPivotReportReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.batch-report`. */
+export type Ga4BatchReportInput = {
+  connection?: string;
+  property: string;
+  requestJson?: string;
+};
+
+/** Return shape for `ga4.batch-report`. */
+export type Ga4BatchReportReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.check-compatibility`. */
+export type Ga4CheckCompatibilityInput = {
+  compatibleOnly?: boolean;
+  connection?: string;
+  dimensions?: string;
+  metrics?: string;
+  property: string;
+};
+
+/** Return shape for `ga4.check-compatibility`. */
+export type Ga4CheckCompatibilityReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.ecommerce`. */
+export type Ga4EcommerceInput = {
+  by?: string;
+  connection?: string;
+  days?: string;
+  limit?: string;
+  property: string;
+};
+
+/** Return shape for `ga4.ecommerce`. */
+export type Ga4EcommerceReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.metadata`. */
+export type Ga4MetadataInput = {
+  connection?: string;
+  property: string;
+};
+
+/** Return shape for `ga4.metadata`. */
+export type Ga4MetadataReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.pivot-report`. */
+export type Ga4PivotReportInput = {
+  connection?: string;
+  property: string;
+  requestJson?: string;
+};
+
+/** Return shape for `ga4.pivot-report`. */
+export type Ga4PivotReportReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.realtime`. */
+export type Ga4RealtimeInput = {
+  connection?: string;
+  dimensions?: string;
+  limit?: string;
+  metrics?: string;
+  property: string;
+};
+
+/** Return shape for `ga4.realtime`. */
+export type Ga4RealtimeReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.report`. */
+export type Ga4ReportInput = {
+  connection?: string;
+  dimensions?: string;
+  endDate?: string;
+  limit?: string;
+  metrics?: string;
+  offset?: string;
+  property: string;
+  startDate?: string;
+};
+
+/** Return shape for `ga4.report`. */
+export type Ga4ReportReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.top-pages`. */
+export type Ga4TopPagesInput = {
+  connection?: string;
+  days?: string;
+  limit?: string;
+  property: string;
+};
+
+/** Return shape for `ga4.top-pages`. */
+export type Ga4TopPagesReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.top-sources`. */
+export type Ga4TopSourcesInput = {
+  connection?: string;
+  days?: string;
+  limit?: string;
+  property: string;
+};
+
+/** Return shape for `ga4.top-sources`. */
+export type Ga4TopSourcesReturn = {
+  result: unknown;
+};
+
+/** Input shape for `ga4.trends`. */
+export type Ga4TrendsInput = {
+  connection?: string;
+  days?: string;
+  metric?: string;
+  property: string;
+};
+
+/** Return shape for `ga4.trends`. */
+export type Ga4TrendsReturn = {
+  result: unknown;
+};
+
 /** Input shape for `gmail.list`. */
 export type GmailListInput = {
   connector?: string;

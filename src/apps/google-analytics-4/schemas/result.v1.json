@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ravi.local/apps/google-analytics-4/schemas/result.v1.json",
+  "title": "Google Analytics 4 CLI Result Envelope",
+  "type": "object",
+  "properties": {
+    "result": true
+  },
+  "required": ["result"],
+  "additionalProperties": false
+}

@@ -30298,6 +30298,2210 @@ export const FeedbackSendReturnSchema = {
   "type": "object"
 } as const satisfies SdkJsonSchema;
 
+/** JSON Schema for the input body of `ga4.admin-access-report`. */
+export const Ga4AdminAccessReportInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "entity": {
+      "description": "accounts/<id> or properties/<id>",
+      "type": "string"
+    },
+    "requestJson": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "entity"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-access-report`. */
+export const Ga4AdminAccessReportReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-account-summaries`. */
+export const Ga4AdminAccountSummariesInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "limit": {
+      "default": "50",
+      "type": "string"
+    },
+    "pageToken": {
+      "type": "string"
+    }
+  },
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-account-summaries`. */
+export const Ga4AdminAccountSummariesReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-acknowledge-user-data`. */
+export const Ga4AdminAcknowledgeUserDataInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "dryRun": {
+      "description": "Required; only prints the planned request without Google writes",
+      "type": "boolean"
+    },
+    "property": {
+      "type": "string"
+    },
+    "requestJson": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-acknowledge-user-data`. */
+export const Ga4AdminAcknowledgeUserDataReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-archive`. */
+export const Ga4AdminArchiveInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "dryRun": {
+      "description": "Required; only prints the planned request without Google writes",
+      "type": "boolean"
+    },
+    "name": {
+      "type": "string"
+    },
+    "resource": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "resource"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-archive`. */
+export const Ga4AdminArchiveReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-change-history`. */
+export const Ga4AdminChangeHistoryInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "account": {
+      "description": "Account id or accounts/<id>",
+      "type": "string"
+    },
+    "connection": {
+      "type": "string"
+    },
+    "requestJson": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "account"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-change-history`. */
+export const Ga4AdminChangeHistoryReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-create`. */
+export const Ga4AdminCreateInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "dryRun": {
+      "description": "Required; only prints the planned request without Google writes",
+      "type": "boolean"
+    },
+    "parent": {
+      "description": "Required for nested resources",
+      "type": "string"
+    },
+    "requestJson": {
+      "description": "Official create request body",
+      "type": "string"
+    },
+    "resource": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "resource"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-create`. */
+export const Ga4AdminCreateReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-delete`. */
+export const Ga4AdminDeleteInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "dryRun": {
+      "description": "Required; only prints the planned request without Google writes",
+      "type": "boolean"
+    },
+    "name": {
+      "type": "string"
+    },
+    "resource": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "resource"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-delete`. */
+export const Ga4AdminDeleteReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-get`. */
+export const Ga4AdminGetInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "name": {
+      "description": "Canonical Google resource name",
+      "type": "string"
+    },
+    "resource": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "resource"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-get`. */
+export const Ga4AdminGetReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-global-site-tag`. */
+export const Ga4AdminGlobalSiteTagInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "data-stream": {
+      "description": "properties/<id>/dataStreams/<id>",
+      "type": "string"
+    }
+  },
+  "required": [
+    "data-stream"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-global-site-tag`. */
+export const Ga4AdminGlobalSiteTagReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-list`. */
+export const Ga4AdminListInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "limit": {
+      "default": "50",
+      "type": "string"
+    },
+    "pageToken": {
+      "type": "string"
+    },
+    "parent": {
+      "description": "Parent resource, e.g. properties/123 or a data stream name",
+      "type": "string"
+    },
+    "resource": {
+      "description": "Run `ravi ga4 admin-list --help` for supported resource names",
+      "type": "string"
+    }
+  },
+  "required": [
+    "resource"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-list`. */
+export const Ga4AdminListReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-setting-get`. */
+export const Ga4AdminSettingGetInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "name": {
+      "description": "Canonical property or data stream resource name",
+      "type": "string"
+    },
+    "setting": {
+      "description": "data-retention|attribution|google-signals|reporting-identity|enhanced-measurement|data-redaction",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "setting"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-setting-get`. */
+export const Ga4AdminSettingGetReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-setting-update`. */
+export const Ga4AdminSettingUpdateInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "dryRun": {
+      "description": "Required; only prints the planned request without Google writes",
+      "type": "boolean"
+    },
+    "name": {
+      "type": "string"
+    },
+    "requestJson": {
+      "type": "string"
+    },
+    "setting": {
+      "type": "string"
+    },
+    "updateMask": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "setting"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-setting-update`. */
+export const Ga4AdminSettingUpdateReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.admin-update`. */
+export const Ga4AdminUpdateInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "dryRun": {
+      "description": "Required; only prints the planned request without Google writes",
+      "type": "boolean"
+    },
+    "name": {
+      "type": "string"
+    },
+    "requestJson": {
+      "type": "string"
+    },
+    "resource": {
+      "type": "string"
+    },
+    "updateMask": {
+      "description": "Required comma-separated field mask",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "resource"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.admin-update`. */
+export const Ga4AdminUpdateReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.audience`. */
+export const Ga4AudienceInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "by": {
+      "default": "country",
+      "description": "country|city|device",
+      "type": "string"
+    },
+    "connection": {
+      "type": "string"
+    },
+    "days": {
+      "default": "30",
+      "type": "string"
+    },
+    "limit": {
+      "default": "25",
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.audience`. */
+export const Ga4AudienceReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.audience-export-create`. */
+export const Ga4AudienceExportCreateInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "dryRun": {
+      "description": "Required; only prints the planned request without Google writes",
+      "type": "boolean"
+    },
+    "property": {
+      "type": "string"
+    },
+    "requestJson": {
+      "description": "Official AudienceExport body",
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.audience-export-create`. */
+export const Ga4AudienceExportCreateReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.audience-export-get`. */
+export const Ga4AudienceExportGetInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "name": {
+      "description": "properties/<id>/audienceExports/<id>",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.audience-export-get`. */
+export const Ga4AudienceExportGetReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.audience-export-list`. */
+export const Ga4AudienceExportListInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "limit": {
+      "default": "50",
+      "type": "string"
+    },
+    "pageToken": {
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.audience-export-list`. */
+export const Ga4AudienceExportListReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.audience-export-query`. */
+export const Ga4AudienceExportQueryInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "requestJson": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.audience-export-query`. */
+export const Ga4AudienceExportQueryReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.batch-pivot-report`. */
+export const Ga4BatchPivotReportInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    },
+    "requestJson": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.batch-pivot-report`. */
+export const Ga4BatchPivotReportReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.batch-report`. */
+export const Ga4BatchReportInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    },
+    "requestJson": {
+      "description": "Official BatchRunReportsRequest JSON",
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.batch-report`. */
+export const Ga4BatchReportReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.check-compatibility`. */
+export const Ga4CheckCompatibilityInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "compatibleOnly": {
+      "description": "Return only compatible fields",
+      "type": "boolean"
+    },
+    "connection": {
+      "type": "string"
+    },
+    "dimensions": {
+      "type": "string"
+    },
+    "metrics": {
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.check-compatibility`. */
+export const Ga4CheckCompatibilityReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.ecommerce`. */
+export const Ga4EcommerceInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "by": {
+      "default": "channel",
+      "description": "channel|item",
+      "type": "string"
+    },
+    "connection": {
+      "type": "string"
+    },
+    "days": {
+      "default": "30",
+      "type": "string"
+    },
+    "limit": {
+      "default": "25",
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.ecommerce`. */
+export const Ga4EcommerceReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.metadata`. */
+export const Ga4MetadataInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.metadata`. */
+export const Ga4MetadataReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.pivot-report`. */
+export const Ga4PivotReportInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    },
+    "requestJson": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.pivot-report`. */
+export const Ga4PivotReportReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.realtime`. */
+export const Ga4RealtimeInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "dimensions": {
+      "description": "Realtime dimensions",
+      "type": "string"
+    },
+    "limit": {
+      "default": "100",
+      "description": "Rows, 1-250000",
+      "type": "string"
+    },
+    "metrics": {
+      "default": "activeUsers",
+      "description": "Realtime metrics",
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.realtime`. */
+export const Ga4RealtimeReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.report`. */
+export const Ga4ReportInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "description": "Ravi credential connection (default: default)",
+      "type": "string"
+    },
+    "dimensions": {
+      "description": "Comma-separated Data API dimensions",
+      "type": "string"
+    },
+    "endDate": {
+      "default": "yesterday",
+      "description": "End date, e.g. yesterday or 2026-06-30",
+      "type": "string"
+    },
+    "limit": {
+      "default": "1000",
+      "description": "Rows, 1-250000",
+      "type": "string"
+    },
+    "metrics": {
+      "description": "Comma-separated Data API metrics",
+      "type": "string"
+    },
+    "offset": {
+      "default": "0",
+      "description": "Pagination offset",
+      "type": "string"
+    },
+    "property": {
+      "description": "GA4 property id or properties/<id>",
+      "type": "string"
+    },
+    "startDate": {
+      "default": "30daysAgo",
+      "description": "Start date, e.g. 30daysAgo or 2026-06-01",
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.report`. */
+export const Ga4ReportReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.top-pages`. */
+export const Ga4TopPagesInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "days": {
+      "default": "30",
+      "description": "Period length in days",
+      "type": "string"
+    },
+    "limit": {
+      "default": "25",
+      "description": "Rows, 1-1000",
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.top-pages`. */
+export const Ga4TopPagesReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.top-sources`. */
+export const Ga4TopSourcesInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "days": {
+      "default": "30",
+      "type": "string"
+    },
+    "limit": {
+      "default": "25",
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.top-sources`. */
+export const Ga4TopSourcesReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the input body of `ga4.trends`. */
+export const Ga4TrendsInputSchema = {
+  "additionalProperties": false,
+  "properties": {
+    "connection": {
+      "type": "string"
+    },
+    "days": {
+      "default": "30",
+      "type": "string"
+    },
+    "metric": {
+      "default": "sessions",
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
+/** JSON Schema for the return shape of `ga4.trends`. */
+export const Ga4TrendsReturnSchema = {
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "propertyNames": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "required": [
+    "result"
+  ],
+  "type": "object"
+} as const satisfies SdkJsonSchema;
+
 /** JSON Schema for the input body of `gmail.list`. */
 export const GmailListInputSchema = {
   "additionalProperties": false,

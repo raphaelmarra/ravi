@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ravi.local/apps/google-analytics-4/schemas/cli-invocation.v1.json",
+  "title": "Google Analytics 4 Router CLI Invocation",
+  "type": "object",
+  "properties": {
+    "args": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": { "type": ["string", "number", "boolean", "null"] }
+    }
+  },
+  "additionalProperties": false
+}
