@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "google-business-profile.health-result.v1",
+  "title": "Google Business Profile health result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "app",
+    "connection",
+    "ready",
+    "credentialConfigured",
+    "credentialStatus",
+    "authenticated",
+    "externalCheckPerformed",
+    "writesEnabled",
+    "message"
+  ],
+  "properties": {
+    "app": { "const": "google-business-profile" },
+    "connection": { "type": "string" },
+    "ready": { "type": "boolean" },
+    "credentialConfigured": { "type": "boolean" },
+    "credentialStatus": { "type": "string" },
+    "authenticated": { "const": false },
+    "externalCheckPerformed": { "const": false },
+    "writesEnabled": { "type": "boolean" },
+    "message": { "type": "string" }
+  }
+}

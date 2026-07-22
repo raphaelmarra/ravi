@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "google-business-profile.operation-input.v1",
+  "title": "Google Business Profile CLI operation input",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "args": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "connection": {
+      "type": "string"
+    },
+    "cursor": {
+      "type": "string"
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2500
+    }
+  }
+}

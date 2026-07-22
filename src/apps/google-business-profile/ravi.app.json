@@ -1,0 +1,3300 @@
+{
+  "schema": "ravi.app/v1",
+  "id": "google-business-profile",
+  "name": "Google Business Profile",
+  "version": "0.2.0",
+  "description": "Operate Google Business Profile accounts, locations, reviews, posts, media, performance and governance through Ravi Apps with source-ready fail-closed writes.",
+  "interfaces": {
+    "cli": {
+      "command": "ravi google-business-profile",
+      "json": true,
+      "health": "ravi gbp health --json"
+    }
+  },
+  "operations": {
+    "google-business-profile.help": {
+      "interface": "builtin",
+      "handler": "apps.help",
+      "mutating": false
+    },
+    "google-business-profile.show": {
+      "interface": "builtin",
+      "handler": "apps.manifest.show",
+      "mutating": false
+    },
+    "google-business-profile.check": {
+      "interface": "builtin",
+      "handler": "apps.manifest.check",
+      "mutating": false
+    },
+    "google-business-profile.accounts": {
+      "interface": "cli",
+      "command": "ravi gbp accounts --json {args}",
+      "mutating": false,
+      "permission": "gbp:accounts:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read accounts from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile accounts --limit 25 --json",
+        "arguments": [],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile accounts --limit 25 --json",
+          "ravi google-business-profile accounts --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile accounts --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.account-get": {
+      "interface": "cli",
+      "command": "ravi gbp account-get --json {args}",
+      "mutating": false,
+      "permission": "gbp:accounts:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read account get from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile account-get accounts/123 --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile account-get accounts/123 --json",
+          "ravi google-business-profile account-get --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile account-get --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.locations": {
+      "interface": "cli",
+      "command": "ravi gbp locations --json {args}",
+      "mutating": false,
+      "permission": "gbp:locations:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read locations from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile locations accounts/123 --mask name,title,metadata --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          },
+          {
+            "flags": "--mask <fields>",
+            "description": "Read mask for Business Information fields.",
+            "required": false
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile locations accounts/123 --mask name,title,metadata --json",
+          "ravi google-business-profile locations --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile locations --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.location-get": {
+      "interface": "cli",
+      "command": "ravi gbp location-get --json {args}",
+      "mutating": false,
+      "permission": "gbp:locations:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read location get from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile location-get locations/456 --mask name,title --json",
+        "arguments": [
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--mask <fields>",
+            "description": "Read mask for Business Information fields.",
+            "required": false
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile location-get locations/456 --mask name,title --json",
+          "ravi google-business-profile location-get --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile location-get --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.location-update": {
+      "interface": "cli",
+      "command": "ravi gbp location-update --json {args}",
+      "mutating": true,
+      "permission": "gbp:locations:write",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed location update operation for Google Business Profile.",
+        "usage": "ravi google-business-profile location-update locations/456 --mask websiteUri --payload '{\"websiteUri\":\"https://example.com\"}' --json",
+        "arguments": [
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--mask <fields>",
+            "description": "Required update mask.",
+            "required": true
+          },
+          {
+            "flags": "--payload <json>",
+            "description": "Provider JSON object payload; redacted in permission metadata.",
+            "required": true
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile location-update locations/456 --mask websiteUri --payload '{\"websiteUri\":\"https://example.com\"}' --json",
+          "ravi google-business-profile location-update --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "high"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile location-update --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.location-delete": {
+      "interface": "cli",
+      "command": "ravi gbp location-delete --json {args}",
+      "mutating": true,
+      "permission": "gbp:locations:delete",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "destructive"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed location delete operation for Google Business Profile.",
+        "usage": "ravi google-business-profile location-delete locations/456 --json",
+        "arguments": [
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile location-delete locations/456 --json",
+          "ravi google-business-profile location-delete --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "destructive"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile location-delete --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.reviews": {
+      "interface": "cli",
+      "command": "ravi gbp reviews --json {args}",
+      "mutating": false,
+      "permission": "gbp:reviews:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read reviews from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile reviews accounts/123 locations/456 --limit 25 --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile reviews accounts/123 locations/456 --limit 25 --json",
+          "ravi google-business-profile reviews --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile reviews --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.review-get": {
+      "interface": "cli",
+      "command": "ravi gbp review-get --json {args}",
+      "mutating": false,
+      "permission": "gbp:reviews:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read review get from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile review-get accounts/123 locations/456 REVIEW_ID --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "review",
+            "description": "Review id or reviews/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile review-get accounts/123 locations/456 REVIEW_ID --json",
+          "ravi google-business-profile review-get --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile review-get --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.review-reply": {
+      "interface": "cli",
+      "command": "ravi gbp review-reply --json {args}",
+      "mutating": true,
+      "permission": "gbp:reviews:write",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed review reply operation for Google Business Profile.",
+        "usage": "ravi google-business-profile review-reply accounts/123 locations/456 REVIEW_ID --comment 'Obrigado pelo feedback.' --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "review",
+            "description": "Review id or reviews/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--comment <text>",
+            "description": "Public review reply text.",
+            "required": true
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile review-reply accounts/123 locations/456 REVIEW_ID --comment 'Obrigado pelo feedback.' --json",
+          "ravi google-business-profile review-reply --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "high"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile review-reply --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.review-reply-delete": {
+      "interface": "cli",
+      "command": "ravi gbp review-reply-delete --json {args}",
+      "mutating": true,
+      "permission": "gbp:reviews:delete",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "destructive"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed review reply delete operation for Google Business Profile.",
+        "usage": "ravi google-business-profile review-reply-delete accounts/123 locations/456 REVIEW_ID --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "review",
+            "description": "Review id or reviews/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile review-reply-delete accounts/123 locations/456 REVIEW_ID --json",
+          "ravi google-business-profile review-reply-delete --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "destructive"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile review-reply-delete --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.posts": {
+      "interface": "cli",
+      "command": "ravi gbp posts --json {args}",
+      "mutating": false,
+      "permission": "gbp:posts:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read posts from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile posts accounts/123 locations/456 --limit 25 --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile posts accounts/123 locations/456 --limit 25 --json",
+          "ravi google-business-profile posts --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile posts --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.post-get": {
+      "interface": "cli",
+      "command": "ravi gbp post-get --json {args}",
+      "mutating": false,
+      "permission": "gbp:posts:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read post get from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile post-get accounts/123 locations/456 POST_ID --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "post",
+            "description": "Local post id or localPosts/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile post-get accounts/123 locations/456 POST_ID --json",
+          "ravi google-business-profile post-get --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile post-get --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.post-create": {
+      "interface": "cli",
+      "command": "ravi gbp post-create --json {args}",
+      "mutating": true,
+      "permission": "gbp:posts:write",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed post create operation for Google Business Profile.",
+        "usage": "ravi google-business-profile post-create accounts/123 locations/456 --payload '{\"topicType\":\"STANDARD\",\"summary\":\"Novidade\"}' --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--payload <json>",
+            "description": "Provider JSON object payload; redacted in permission metadata.",
+            "required": true
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile post-create accounts/123 locations/456 --payload '{\"topicType\":\"STANDARD\",\"summary\":\"Novidade\"}' --json",
+          "ravi google-business-profile post-create --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "high"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile post-create --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.post-update": {
+      "interface": "cli",
+      "command": "ravi gbp post-update --json {args}",
+      "mutating": true,
+      "permission": "gbp:posts:write",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed post update operation for Google Business Profile.",
+        "usage": "ravi google-business-profile post-update accounts/123 locations/456 POST_ID --mask summary --payload '{\"summary\":\"Texto novo\"}' --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "post",
+            "description": "Local post id or localPosts/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--mask <fields>",
+            "description": "Required update mask.",
+            "required": true
+          },
+          {
+            "flags": "--payload <json>",
+            "description": "Provider JSON object payload; redacted in permission metadata.",
+            "required": true
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile post-update accounts/123 locations/456 POST_ID --mask summary --payload '{\"summary\":\"Texto novo\"}' --json",
+          "ravi google-business-profile post-update --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "high"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile post-update --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.post-delete": {
+      "interface": "cli",
+      "command": "ravi gbp post-delete --json {args}",
+      "mutating": true,
+      "permission": "gbp:posts:delete",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "destructive"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed post delete operation for Google Business Profile.",
+        "usage": "ravi google-business-profile post-delete accounts/123 locations/456 POST_ID --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "post",
+            "description": "Local post id or localPosts/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile post-delete accounts/123 locations/456 POST_ID --json",
+          "ravi google-business-profile post-delete --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "destructive"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile post-delete --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.media": {
+      "interface": "cli",
+      "command": "ravi gbp media --json {args}",
+      "mutating": false,
+      "permission": "gbp:media:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read media from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile media accounts/123 locations/456 --limit 25 --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile media accounts/123 locations/456 --limit 25 --json",
+          "ravi google-business-profile media --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile media --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.media-get": {
+      "interface": "cli",
+      "command": "ravi gbp media-get --json {args}",
+      "mutating": false,
+      "permission": "gbp:media:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read media get from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile media-get accounts/123 locations/456 MEDIA_KEY --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "media",
+            "description": "Media key or media/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile media-get accounts/123 locations/456 MEDIA_KEY --json",
+          "ravi google-business-profile media-get --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile media-get --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.media-create": {
+      "interface": "cli",
+      "command": "ravi gbp media-create --json {args}",
+      "mutating": true,
+      "permission": "gbp:media:write",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed media create operation for Google Business Profile.",
+        "usage": "ravi google-business-profile media-create accounts/123 locations/456 --payload '{\"mediaFormat\":\"PHOTO\",\"sourceUrl\":\"https://example.com/photo.jpg\"}' --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          },
+          {
+            "flags": "--payload <json>",
+            "description": "Provider JSON object payload; redacted in permission metadata.",
+            "required": true
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile media-create accounts/123 locations/456 --payload '{\"mediaFormat\":\"PHOTO\",\"sourceUrl\":\"https://example.com/photo.jpg\"}' --json",
+          "ravi google-business-profile media-create --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "high"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile media-create --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.media-update": {
+      "interface": "cli",
+      "command": "ravi gbp media-update --json {args}",
+      "mutating": true,
+      "permission": "gbp:media:write",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed media update operation for Google Business Profile.",
+        "usage": "ravi google-business-profile media-update accounts/123 locations/456 MEDIA_KEY --mask locationAssociation --payload '{\"locationAssociation\":{\"category\":\"COVER\"}}' --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "media",
+            "description": "Media key or media/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          },
+          {
+            "flags": "--mask <fields>",
+            "description": "Required update mask.",
+            "required": true
+          },
+          {
+            "flags": "--payload <json>",
+            "description": "Provider JSON object payload; redacted in permission metadata.",
+            "required": true
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile media-update accounts/123 locations/456 MEDIA_KEY --mask locationAssociation --payload '{\"locationAssociation\":{\"category\":\"COVER\"}}' --json",
+          "ravi google-business-profile media-update --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "high"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile media-update --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.media-delete": {
+      "interface": "cli",
+      "command": "ravi gbp media-delete --json {args}",
+      "mutating": true,
+      "permission": "gbp:media:delete",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "destructive"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed media delete operation for Google Business Profile.",
+        "usage": "ravi google-business-profile media-delete accounts/123 locations/456 MEDIA_KEY --json",
+        "arguments": [
+          {
+            "name": "account",
+            "description": "Account id or accounts/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "media",
+            "description": "Media key or media/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile media-delete accounts/123 locations/456 MEDIA_KEY --json",
+          "ravi google-business-profile media-delete --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "destructive"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile media-delete --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.performance": {
+      "interface": "cli",
+      "command": "ravi gbp performance --json {args}",
+      "mutating": false,
+      "permission": "gbp:performance:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read performance from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile performance locations/456 --metrics CALL_CLICKS --start 2026-06-01 --end 2026-06-30 --json",
+        "arguments": [
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--metrics <csv>",
+            "description": "Required DailyMetric values.",
+            "required": true
+          },
+          {
+            "flags": "--start <date>",
+            "description": "Required start date YYYY-MM-DD.",
+            "required": true
+          },
+          {
+            "flags": "--end <date>",
+            "description": "Required end date YYYY-MM-DD.",
+            "required": true
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile performance locations/456 --metrics CALL_CLICKS --start 2026-06-01 --end 2026-06-30 --json",
+          "ravi google-business-profile performance --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile performance --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.search-keywords": {
+      "interface": "cli",
+      "command": "ravi gbp search-keywords --json {args}",
+      "mutating": false,
+      "permission": "gbp:performance:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read search keywords from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile search-keywords locations/456 --start-month 2026-01 --end-month 2026-06 --json",
+        "arguments": [
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          },
+          {
+            "flags": "--start-month <month>",
+            "description": "Required first month YYYY-MM.",
+            "required": true
+          },
+          {
+            "flags": "--end-month <month>",
+            "description": "Required last month YYYY-MM.",
+            "required": true
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile search-keywords locations/456 --start-month 2026-01 --end-month 2026-06 --json",
+          "ravi google-business-profile search-keywords --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile search-keywords --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.categories": {
+      "interface": "cli",
+      "command": "ravi gbp categories --json {args}",
+      "mutating": false,
+      "permission": "gbp:categories:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read categories from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile categories --region BR --language pt-BR --json",
+        "arguments": [],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--limit <n>",
+            "description": "Provider page size bounded by the operation contract.",
+            "required": false
+          },
+          {
+            "flags": "--cursor <token>",
+            "description": "Provider page token from the previous response.",
+            "required": false
+          },
+          {
+            "flags": "--filter <text>",
+            "description": "Display-name filter.",
+            "required": false
+          },
+          {
+            "flags": "--region <code>",
+            "description": "CLDR region code.",
+            "required": false,
+            "defaultValue": "BR"
+          },
+          {
+            "flags": "--language <code>",
+            "description": "BCP-47 language code.",
+            "required": false,
+            "defaultValue": "pt-BR"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile categories --region BR --language pt-BR --json",
+          "ravi google-business-profile categories --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile categories --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.attributes": {
+      "interface": "cli",
+      "command": "ravi gbp attributes --json {args}",
+      "mutating": false,
+      "permission": "gbp:attributes:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read attributes from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile attributes locations/456 --json",
+        "arguments": [
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile attributes locations/456 --json",
+          "ravi google-business-profile attributes --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile attributes --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.verifications": {
+      "interface": "cli",
+      "command": "ravi gbp verifications --json {args}",
+      "mutating": false,
+      "permission": "gbp:verifications:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "medium"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read verifications from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile verifications locations/456 --json",
+        "arguments": [
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile verifications locations/456 --json",
+          "ravi google-business-profile verifications --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "medium"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile verifications --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.verification-options": {
+      "interface": "cli",
+      "command": "ravi gbp verification-options --json {args}",
+      "mutating": false,
+      "permission": "gbp:verifications:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "medium"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read verification options from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile verification-options locations/456 --language pt-BR --json",
+        "arguments": [
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--language <code>",
+            "description": "BCP-47 language code.",
+            "required": false,
+            "defaultValue": "pt-BR"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile verification-options locations/456 --language pt-BR --json",
+          "ravi google-business-profile verification-options --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "medium"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile verification-options --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.verify": {
+      "interface": "cli",
+      "command": "ravi gbp verify --json {args}",
+      "mutating": true,
+      "permission": "gbp:verifications:write",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed verify operation for Google Business Profile.",
+        "usage": "ravi google-business-profile verify locations/456 SMS --payload '{\"phoneNumber\":\"+551100000000\"}' --json",
+        "arguments": [
+          {
+            "name": "location",
+            "description": "Location id or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--payload <json>",
+            "description": "Provider JSON object payload; redacted in permission metadata.",
+            "required": false
+          },
+          {
+            "flags": "--language <code>",
+            "description": "BCP-47 language code.",
+            "required": false,
+            "defaultValue": "pt-BR"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile verify locations/456 SMS --payload '{\"phoneNumber\":\"+551100000000\"}' --json",
+          "ravi google-business-profile verify --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "high"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile verify --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.verification-complete": {
+      "interface": "cli",
+      "command": "ravi gbp verification-complete --json {args}",
+      "mutating": true,
+      "permission": "gbp:verifications:write",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed verification complete operation for Google Business Profile.",
+        "usage": "ravi google-business-profile verification-complete locations/456/verifications/789 --pin 123456 --json",
+        "arguments": [
+          {
+            "name": "verification",
+            "description": "Full locations/{id}/verifications/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--pin <pin>",
+            "description": "Verification PIN.",
+            "required": true
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile verification-complete locations/456/verifications/789 --pin 123456 --json",
+          "ravi google-business-profile verification-complete --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "high"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile verification-complete --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.admins": {
+      "interface": "cli",
+      "command": "ravi gbp admins --json {args}",
+      "mutating": false,
+      "permission": "gbp:admins:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "medium"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read admins from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile admins accounts/123 --json",
+        "arguments": [
+          {
+            "name": "parent",
+            "description": "Full accounts/{id} or locations/{id} resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile admins accounts/123 --json",
+          "ravi google-business-profile admins --json"
+        ],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "medium"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile admins --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.admin-add": {
+      "interface": "cli",
+      "command": "ravi gbp admin-add --json {args}",
+      "mutating": true,
+      "permission": "gbp:admins:write",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed admin add operation for Google Business Profile.",
+        "usage": "ravi google-business-profile admin-add accounts/123 pessoa@example.com --role MANAGER --json",
+        "arguments": [
+          {
+            "name": "parent",
+            "description": "Full accounts/{id} or locations/{id} resource name.",
+            "required": true
+          },
+          {
+            "name": "email",
+            "description": "Administrator email address.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--role <role>",
+            "description": "Official AdminRole value.",
+            "required": false,
+            "defaultValue": "MANAGER"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile admin-add accounts/123 pessoa@example.com --role MANAGER --json",
+          "ravi google-business-profile admin-add --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "high"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile admin-add --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.admin-update": {
+      "interface": "cli",
+      "command": "ravi gbp admin-update --json {args}",
+      "mutating": true,
+      "permission": "gbp:admins:write",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "high"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed admin update operation for Google Business Profile.",
+        "usage": "ravi google-business-profile admin-update accounts/123/admins/789 --role OWNER --json",
+        "arguments": [
+          {
+            "name": "admin",
+            "description": "Full accounts/.../admins/... or locations/.../admins/... resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          },
+          {
+            "flags": "--role <role>",
+            "description": "Official AdminRole value.",
+            "required": true
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile admin-update accounts/123/admins/789 --role OWNER --json",
+          "ravi google-business-profile admin-update --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "high"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile admin-update --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.admin-delete": {
+      "interface": "cli",
+      "command": "ravi gbp admin-delete --json {args}",
+      "mutating": true,
+      "permission": "gbp:admins:delete",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/operation-result.v1.json",
+      "safety": {
+        "idempotent": false,
+        "dryRunSupported": false,
+        "confirmationRequired": true,
+        "hitlRequired": true,
+        "liveExecution": false,
+        "risk": "destructive"
+      },
+      "reliability": {
+        "timeoutMs": 30000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Fail-closed admin delete operation for Google Business Profile.",
+        "usage": "ravi google-business-profile admin-delete accounts/123/admins/789 --json",
+        "arguments": [
+          {
+            "name": "admin",
+            "description": "Full accounts/.../admins/... or locations/.../admins/... resource name.",
+            "required": true
+          }
+        ],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": [
+          "ravi google-business-profile admin-delete accounts/123/admins/789 --json",
+          "ravi google-business-profile admin-delete --json"
+        ],
+        "safety": {
+          "idempotent": false,
+          "dryRunSupported": false,
+          "confirmationRequired": true,
+          "hitlRequired": true,
+          "liveExecution": false,
+          "risk": "destructive"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile admin-delete --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    },
+    "google-business-profile.health": {
+      "interface": "cli",
+      "command": "ravi gbp health --json {args}",
+      "mutating": false,
+      "permission": "gbp:health:read",
+      "json": true,
+      "inputSchema": "schemas/operation-input.v1.json",
+      "outputSchema": "schemas/health-result.v1.json",
+      "safety": {
+        "idempotent": true,
+        "dryRunSupported": false,
+        "confirmationRequired": false,
+        "hitlRequired": false,
+        "liveExecution": true,
+        "risk": "low"
+      },
+      "reliability": {
+        "timeoutMs": 5000,
+        "maxAttempts": 1
+      },
+      "help": {
+        "complete": true,
+        "missing": [],
+        "summary": "Read health from Google Business Profile through the native Ravi App.",
+        "usage": "ravi google-business-profile health --json",
+        "arguments": [],
+        "options": [
+          {
+            "flags": "--json",
+            "description": "Print stable JSON envelope.",
+            "required": true
+          },
+          {
+            "flags": "--connection <id>",
+            "description": "Credential broker connection id; default is default.",
+            "required": false,
+            "defaultValue": "default"
+          }
+        ],
+        "examples": ["ravi google-business-profile health --json", "ravi google-business-profile health --json"],
+        "safety": {
+          "idempotent": true,
+          "dryRunSupported": false,
+          "confirmationRequired": false,
+          "hitlRequired": false,
+          "liveExecution": true,
+          "risk": "low"
+        },
+        "validationCommands": [
+          "./bin/ravi apps check google-business-profile --json",
+          "./bin/ravi google-business-profile health --help --json"
+        ],
+        "provenance": {
+          "source": "MIGRATION_CONTRACT.json + native CLI decorators + Google Business Profile official REST references",
+          "verifiedAt": "2026-07-22",
+          "confidence": "medium-high"
+        },
+        "quota": {
+          "status": "unknown-numeric-limits",
+          "officialDocs": "https://developers.google.com/my-business/content/limits",
+          "accessedAt": "2026-07-22",
+          "throttle": {
+            "concurrency": 1,
+            "burst": 0,
+            "maxAttempts": 1,
+            "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+            "circuitBreaker": "tenant-scoped before read-only promotion"
+          },
+          "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+        },
+        "permissionSemantics": {
+          "manifestPermissionIsMetadata": true,
+          "providerEnforcement": "Google Business Profile OAuth scopes and API authorization at request time"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "required": [
+      "gbp:accounts:read",
+      "gbp:admins:read",
+      "gbp:attributes:read",
+      "gbp:categories:read",
+      "gbp:health:read",
+      "gbp:locations:read",
+      "gbp:media:read",
+      "gbp:performance:read",
+      "gbp:posts:read",
+      "gbp:reviews:read",
+      "gbp:verifications:read"
+    ],
+    "optional": [],
+    "mutating": [
+      "gbp:admins:delete",
+      "gbp:admins:write",
+      "gbp:locations:delete",
+      "gbp:locations:write",
+      "gbp:media:delete",
+      "gbp:media:write",
+      "gbp:posts:delete",
+      "gbp:posts:write",
+      "gbp:reviews:delete",
+      "gbp:reviews:write",
+      "gbp:verifications:write"
+    ]
+  },
+  "storage": {
+    "sqlite": [],
+    "files": []
+  },
+  "artifacts": [],
+  "events": {
+    "emits": [],
+    "consumes": []
+  },
+  "skills": [],
+  "health": {
+    "checks": [
+      {
+        "id": "manifest",
+        "type": "builtin",
+        "handler": "apps.manifest.check",
+        "required": true,
+        "sideEffectFree": true
+      },
+      {
+        "id": "credential-metadata",
+        "type": "cli",
+        "command": "ravi gbp health --json",
+        "required": false,
+        "sideEffectFree": true,
+        "timeoutMs": 5000
+      }
+    ]
+  },
+  "versioning": {
+    "compatibility": "semver",
+    "migrations": []
+  },
+  "operationClasses": {
+    "read": [
+      "google-business-profile.account-get",
+      "google-business-profile.accounts",
+      "google-business-profile.admins",
+      "google-business-profile.attributes",
+      "google-business-profile.categories",
+      "google-business-profile.health",
+      "google-business-profile.location-get",
+      "google-business-profile.locations",
+      "google-business-profile.media",
+      "google-business-profile.media-get",
+      "google-business-profile.performance",
+      "google-business-profile.post-get",
+      "google-business-profile.posts",
+      "google-business-profile.review-get",
+      "google-business-profile.reviews",
+      "google-business-profile.search-keywords",
+      "google-business-profile.verification-options",
+      "google-business-profile.verifications"
+    ],
+    "write": [
+      "google-business-profile.admin-add",
+      "google-business-profile.admin-update",
+      "google-business-profile.location-update",
+      "google-business-profile.media-create",
+      "google-business-profile.media-update",
+      "google-business-profile.post-create",
+      "google-business-profile.post-update",
+      "google-business-profile.review-reply",
+      "google-business-profile.verification-complete",
+      "google-business-profile.verify"
+    ],
+    "destructive": [
+      "google-business-profile.admin-delete",
+      "google-business-profile.location-delete",
+      "google-business-profile.media-delete",
+      "google-business-profile.post-delete",
+      "google-business-profile.review-reply-delete"
+    ],
+    "financial": []
+  },
+  "auth": {
+    "provider": "google-business-profile",
+    "connectionDefault": "default",
+    "broker": "Ravi credentials broker",
+    "secretMaterialInManifest": false,
+    "phase": "source-ready-no-token",
+    "failureMode": "closed before network when credential is absent"
+  },
+  "quota": {
+    "status": "unknown-numeric-limits",
+    "officialDocs": "https://developers.google.com/my-business/content/limits",
+    "accessedAt": "2026-07-22",
+    "throttle": {
+      "concurrency": 1,
+      "burst": 0,
+      "maxAttempts": 1,
+      "retryAfter": "respect in future read-only promotion; source-ready stops on first 429",
+      "circuitBreaker": "tenant-scoped before read-only promotion"
+    },
+    "cutoverGate": "NO-GO until approved numeric throttle and authenticated read-only proof"
+  }
+}
