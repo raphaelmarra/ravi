@@ -66,6 +66,7 @@ describe("GoogleBusinessProfileClient", () => {
     });
 
     expect(client.health()).toEqual({
+      ok: true,
       app: "google-business-profile",
       connection: "brand",
       ready: true,

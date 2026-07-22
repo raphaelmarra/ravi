@@ -5,6 +5,7 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "ok",
     "app",
     "connection",
     "ready",
@@ -16,6 +17,7 @@
     "message"
   ],
   "properties": {
+    "ok": { "type": "boolean" },
     "app": { "const": "google-business-profile" },
     "connection": { "type": "string" },
     "ready": { "type": "boolean" },

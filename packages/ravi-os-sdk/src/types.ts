@@ -6104,7 +6104,7 @@ export type GbpAdminDeleteReturn = {
 export type GbpAdminUpdateInput = {
   admin: string;
   connection?: string;
-  role?: string;
+  role: string;
 };
 
 /** Return shape for `gbp.admin-update`. */
@@ -6163,6 +6163,7 @@ export type GbpHealthReturn = {
   credentialStatus: string;
   externalCheckPerformed: false;
   message: string;
+  ok: boolean;
   ready: boolean;
   writesEnabled: boolean;
 };
@@ -6194,8 +6195,8 @@ export type GbpLocationGetReturn = {
 export type GbpLocationUpdateInput = {
   connection?: string;
   location: string;
-  mask?: string;
-  payload?: string;
+  mask: string;
+  payload: string;
 };
 
 /** Return shape for `gbp.location-update`. */
@@ -6236,7 +6237,7 @@ export type GbpMediaCreateInput = {
   account: string;
   connection?: string;
   location: string;
-  payload?: string;
+  payload: string;
 };
 
 /** Return shape for `gbp.media-create`. */
@@ -6275,9 +6276,9 @@ export type GbpMediaUpdateInput = {
   account: string;
   connection?: string;
   location: string;
-  mask?: string;
+  mask: string;
   media: string;
-  payload?: string;
+  payload: string;
 };
 
 /** Return shape for `gbp.media-update`. */
@@ -6288,10 +6289,10 @@ export type GbpMediaUpdateReturn = {
 /** Input shape for `gbp.performance`. */
 export type GbpPerformanceInput = {
   connection?: string;
-  end?: string;
+  end: string;
   location: string;
-  metrics?: string;
-  start?: string;
+  metrics: string;
+  start: string;
 };
 
 /** Return shape for `gbp.performance`. */
@@ -6304,7 +6305,7 @@ export type GbpPostCreateInput = {
   account: string;
   connection?: string;
   location: string;
-  payload?: string;
+  payload: string;
 };
 
 /** Return shape for `gbp.post-create`. */
@@ -6343,8 +6344,8 @@ export type GbpPostUpdateInput = {
   account: string;
   connection?: string;
   location: string;
-  mask?: string;
-  payload?: string;
+  mask: string;
+  payload: string;
   post: string;
 };
 
@@ -6383,7 +6384,7 @@ export type GbpReviewGetReturn = {
 /** Input shape for `gbp.review-reply`. */
 export type GbpReviewReplyInput = {
   account: string;
-  comment?: string;
+  comment: string;
   connection?: string;
   location: string;
   review: string;
@@ -6425,10 +6426,10 @@ export type GbpReviewsReturn = {
 export type GbpSearchKeywordsInput = {
   connection?: string;
   cursor?: string;
-  endMonth?: string;
+  endMonth: string;
   limit?: string;
   location: string;
-  startMonth?: string;
+  startMonth: string;
 };
 
 /** Return shape for `gbp.search-keywords`. */
@@ -6439,7 +6440,7 @@ export type GbpSearchKeywordsReturn = {
 /** Input shape for `gbp.verification-complete`. */
 export type GbpVerificationCompleteInput = {
   connection?: string;
-  pin?: string;
+  pin: string;
   verification: string;
 };
 

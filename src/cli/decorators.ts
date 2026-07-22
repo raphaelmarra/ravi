@@ -82,6 +82,7 @@ export interface ArgOptions {
 export interface OptionOptions {
   flags: string;
   description?: string;
+  required?: boolean;
   defaultValue?: unknown;
   schema?: ZodTypeAny;
 }

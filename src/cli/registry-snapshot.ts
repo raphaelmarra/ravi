@@ -66,6 +66,7 @@ export interface OptionRegistryEntry {
   flags: string;
   /** Camel-cased option name as exposed at runtime by `extractOptionName`. */
   name: string;
+  required: boolean;
   description?: string;
   defaultValue?: unknown;
   parsed: ParsedOptionFlags;
@@ -188,6 +189,7 @@ export function buildRegistry(classes: CommandClass[]): RegistrySnapshot {
             index: opt.index,
             flags: opt.flags,
             name: inferred.parsed.name,
+            required: opt.required === true,
             ...(opt.description !== undefined ? { description: opt.description } : {}),
             ...(opt.defaultValue !== undefined ? { defaultValue: opt.defaultValue } : {}),
             parsed: inferred.parsed,

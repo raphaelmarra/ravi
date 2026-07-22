@@ -5,11 +5,12 @@ import { Arg, Command, CommandAccess, Group, Option, Returns } from "../decorato
 import { jsonValueSchema } from "../return-schemas.js";
 
 const resourceSchema = z.string().min(1);
-const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expected YYYY-MM-DD");
-const monthSchema = z.string().regex(/^\d{4}-\d{2}$/, "Expected YYYY-MM");
+const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expected real date YYYY-MM-DD");
+const monthSchema = z.string().regex(/^\d{4}-\d{2}$/, "Expected real month YYYY-MM");
 const wrappedSchema = z.object({ result: jsonValueSchema }).strict();
 const healthReturnSchema = z
   .object({
+    ok: z.boolean(),
     app: z.literal("google-business-profile"),
     connection: z.string(),
     ready: z.boolean(),
@@ -154,8 +155,8 @@ export class GoogleBusinessProfileCommands {
   async locationUpdate(
     @Arg("location", { description: "Location id or locations/{id} resource name", schema: resourceSchema })
     location: string,
-    @Option({ flags: "--mask <fields>", description: "Required update mask" }) mask?: string,
-    @Option({ flags: "--payload <json>", description: "Location JSON object" }) payload?: string,
+    @Option({ flags: "--mask <fields>", description: "Required update mask", required: true }) mask?: string,
+    @Option({ flags: "--payload <json>", description: "Location JSON object", required: true }) payload?: string,
     @Option({ flags: "--connection <id>", description: "Credential connection (default: default)" })
     connection?: string,
   ) {
@@ -244,7 +245,7 @@ export class GoogleBusinessProfileCommands {
     @Arg("account", { schema: resourceSchema }) account: string,
     @Arg("location", { schema: resourceSchema }) location: string,
     @Arg("review", { schema: resourceSchema }) review: string,
-    @Option({ flags: "--comment <text>", description: "Public reply text" }) comment?: string,
+    @Option({ flags: "--comment <text>", description: "Public reply text", required: true }) comment?: string,
     @Option({ flags: "--connection <id>" }) connection?: string,
   ) {
     return wrap(this.client(connection).updateReviewReply(account, location, review, required(comment, "--comment")));
@@ -329,7 +330,7 @@ export class GoogleBusinessProfileCommands {
   async postCreate(
     @Arg("account", { schema: resourceSchema }) account: string,
     @Arg("location", { schema: resourceSchema }) location: string,
-    @Option({ flags: "--payload <json>", description: "LocalPost JSON object" }) payload?: string,
+    @Option({ flags: "--payload <json>", description: "LocalPost JSON object", required: true }) payload?: string,
     @Option({ flags: "--connection <id>" }) connection?: string,
   ) {
     return wrap(this.client(connection).createPost(account, location, jsonObject(payload)));
@@ -357,8 +358,8 @@ export class GoogleBusinessProfileCommands {
     @Arg("account", { schema: resourceSchema }) account: string,
     @Arg("location", { schema: resourceSchema }) location: string,
     @Arg("post", { schema: resourceSchema }) post: string,
-    @Option({ flags: "--mask <fields>", description: "Required update mask" }) mask?: string,
-    @Option({ flags: "--payload <json>", description: "LocalPost JSON object" }) payload?: string,
+    @Option({ flags: "--mask <fields>", description: "Required update mask", required: true }) mask?: string,
+    @Option({ flags: "--payload <json>", description: "LocalPost JSON object", required: true }) payload?: string,
     @Option({ flags: "--connection <id>" }) connection?: string,
   ) {
     return wrap(
@@ -442,7 +443,7 @@ export class GoogleBusinessProfileCommands {
   async mediaCreate(
     @Arg("account", { schema: resourceSchema }) account: string,
     @Arg("location", { schema: resourceSchema }) location: string,
-    @Option({ flags: "--payload <json>", description: "MediaItem JSON object" }) payload?: string,
+    @Option({ flags: "--payload <json>", description: "MediaItem JSON object", required: true }) payload?: string,
     @Option({ flags: "--connection <id>" }) connection?: string,
   ) {
     return wrap(this.client(connection).createMedia(account, location, jsonObject(payload)));
@@ -470,8 +471,8 @@ export class GoogleBusinessProfileCommands {
     @Arg("account", { schema: resourceSchema }) account: string,
     @Arg("location", { schema: resourceSchema }) location: string,
     @Arg("media", { schema: resourceSchema }) media: string,
-    @Option({ flags: "--mask <fields>", description: "Required update mask" }) mask?: string,
-    @Option({ flags: "--payload <json>", description: "MediaItem JSON object" }) payload?: string,
+    @Option({ flags: "--mask <fields>", description: "Required update mask", required: true }) mask?: string,
+    @Option({ flags: "--payload <json>", description: "MediaItem JSON object", required: true }) payload?: string,
     @Option({ flags: "--connection <id>" }) connection?: string,
   ) {
     return wrap(
@@ -516,18 +517,28 @@ export class GoogleBusinessProfileCommands {
   @Returns(wrappedSchema)
   async performance(
     @Arg("location", { schema: resourceSchema }) location: string,
-    @Option({ flags: "--metrics <csv>", description: "Required DailyMetric values, comma-separated" }) metrics?: string,
-    @Option({ flags: "--start <date>", description: "Required start date YYYY-MM-DD", schema: dateSchema })
+    @Option({
+      flags: "--metrics <csv>",
+      description: "Required DailyMetric values, comma-separated",
+      required: true,
+    })
+    metrics?: string,
+    @Option({
+      flags: "--start <date>",
+      description: "Required start date YYYY-MM-DD",
+      schema: dateSchema,
+      required: true,
+    })
     start?: string,
-    @Option({ flags: "--end <date>", description: "Required end date YYYY-MM-DD", schema: dateSchema }) end?: string,
+    @Option({ flags: "--end <date>", description: "Required end date YYYY-MM-DD", schema: dateSchema, required: true })
+    end?: string,
     @Option({ flags: "--connection <id>" }) connection?: string,
   ) {
     return wrap(
       this.client(connection).performance(
         location,
         csv(required(metrics, "--metrics")),
-        required(start, "--start"),
-        required(end, "--end"),
+        ...dateRange(required(start, "--start"), required(end, "--end")),
       ),
     );
   }
@@ -544,9 +555,19 @@ export class GoogleBusinessProfileCommands {
   @Returns(wrappedSchema)
   async searchKeywords(
     @Arg("location", { schema: resourceSchema }) location: string,
-    @Option({ flags: "--start-month <month>", description: "Required first month YYYY-MM", schema: monthSchema })
+    @Option({
+      flags: "--start-month <month>",
+      description: "Required first month YYYY-MM",
+      schema: monthSchema,
+      required: true,
+    })
     start?: string,
-    @Option({ flags: "--end-month <month>", description: "Required last month YYYY-MM", schema: monthSchema })
+    @Option({
+      flags: "--end-month <month>",
+      description: "Required last month YYYY-MM",
+      schema: monthSchema,
+      required: true,
+    })
     end?: string,
     @Option({ flags: "--limit <n>", description: "Page size from 1 to 100 (default: 50)" }) limit?: string,
     @Option({ flags: "--cursor <token>" }) cursor?: string,
@@ -555,8 +576,7 @@ export class GoogleBusinessProfileCommands {
     return wrap(
       this.client(connection).searchKeywords(
         location,
-        required(start, "--start-month"),
-        required(end, "--end-month"),
+        ...monthRange(required(start, "--start-month"), required(end, "--end-month")),
         integer(limit, 50, 1, 100),
         cursor,
       ),
@@ -694,7 +714,7 @@ export class GoogleBusinessProfileCommands {
   async verificationComplete(
     @Arg("verification", { description: "Full locations/.../verifications/... name", schema: resourceSchema })
     verification: string,
-    @Option({ flags: "--pin <pin>", description: "Verification PIN" }) pin?: string,
+    @Option({ flags: "--pin <pin>", description: "Verification PIN", required: true }) pin?: string,
     @Option({ flags: "--connection <id>" }) connection?: string,
   ) {
     return wrap(this.client(connection).completeVerification(verification, required(pin, "--pin")));
@@ -771,7 +791,7 @@ export class GoogleBusinessProfileCommands {
       schema: resourceSchema,
     })
     admin: string,
-    @Option({ flags: "--role <role>", description: "Required official AdminRole value" }) role?: string,
+    @Option({ flags: "--role <role>", description: "Required official AdminRole value", required: true }) role?: string,
     @Option({ flags: "--connection <id>" }) connection?: string,
   ) {
     return wrap(this.client(connection).updateAdmin(admin, required(role, "--role")));
@@ -896,6 +916,43 @@ function csv(value: string): string[] {
     .filter(Boolean);
   if (!values.length) throw new Error("--metrics must contain at least one DailyMetric value.");
   return values;
+}
+
+function dateRange(start: string, end: string): [string, string] {
+  const startTime = parseRealDate(start, "--start");
+  const endTime = parseRealDate(end, "--end");
+  if (startTime > endTime) throw new Error("--start must be before or equal to --end.");
+  return [start, end];
+}
+
+function monthRange(start: string, end: string): [string, string] {
+  const startValue = parseRealMonth(start, "--start-month");
+  const endValue = parseRealMonth(end, "--end-month");
+  if (startValue > endValue) throw new Error("--start-month must be before or equal to --end-month.");
+  return [start, end];
+}
+
+function parseRealDate(value: string, option: string): number {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) throw new Error(`${option} must be a real date in YYYY-MM-DD format.`);
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const timestamp = Date.UTC(year, month - 1, day);
+  const date = new Date(timestamp);
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) {
+    throw new Error(`${option} must be a real date in YYYY-MM-DD format.`);
+  }
+  return timestamp;
+}
+
+function parseRealMonth(value: string, option: string): number {
+  const match = /^(\d{4})-(\d{2})$/.exec(value);
+  if (!match) throw new Error(`${option} must be a real month in YYYY-MM format.`);
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  if (month < 1 || month > 12) throw new Error(`${option} must be a real month in YYYY-MM format.`);
+  return year * 12 + month;
 }
 
 function jsonObject(value: string | undefined): GbpJson {

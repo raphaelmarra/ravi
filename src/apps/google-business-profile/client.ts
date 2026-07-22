@@ -67,6 +67,7 @@ export class GoogleBusinessProfileClient {
     const credentialStatus = connection?.status ?? "missing";
     const ready = credentialConfigured && credentialStatus === "active";
     return {
+      ok: true,
       app: "google-business-profile",
       connection: this.#connection,
       ready,

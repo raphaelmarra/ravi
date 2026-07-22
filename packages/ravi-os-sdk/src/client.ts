@@ -2759,9 +2759,9 @@ export class RaviClient {
       });
     },
     /** Update the role of an account or location administrator */
-    adminUpdate: async (admin: string, options?: {
+    adminUpdate: async (admin: string, options: {
       connection?: string;
-      role?: string;
+      role: string;
     }): Promise<GbpAdminUpdateReturn> => {
       return this.transport.call({
         groupSegments: ["gbp"],
@@ -2836,10 +2836,10 @@ export class RaviClient {
       });
     },
     /** Update selected fields on a Google Business Profile location */
-    locationUpdate: async (location: string, options?: {
+    locationUpdate: async (location: string, options: {
       connection?: string;
-      mask?: string;
-      payload?: string;
+      mask: string;
+      payload: string;
     }): Promise<GbpLocationUpdateReturn> => {
       return this.transport.call({
         groupSegments: ["gbp"],
@@ -2873,9 +2873,9 @@ export class RaviClient {
       });
     },
     /** Publish a media item from an official MediaItem payload */
-    mediaCreate: async (account: string, location: string, options?: {
+    mediaCreate: async (account: string, location: string, options: {
       connection?: string;
-      payload?: string;
+      payload: string;
     }): Promise<GbpMediaCreateReturn> => {
       return this.transport.call({
         groupSegments: ["gbp"],
@@ -2904,10 +2904,10 @@ export class RaviClient {
       });
     },
     /** Update mutable metadata on a media item */
-    mediaUpdate: async (account: string, location: string, media: string, options?: {
+    mediaUpdate: async (account: string, location: string, media: string, options: {
       connection?: string;
-      mask?: string;
-      payload?: string;
+      mask: string;
+      payload: string;
     }): Promise<GbpMediaUpdateReturn> => {
       return this.transport.call({
         groupSegments: ["gbp"],
@@ -2916,11 +2916,11 @@ export class RaviClient {
       });
     },
     /** Fetch daily Google Business Profile performance metrics */
-    performance: async (location: string, options?: {
+    performance: async (location: string, options: {
       connection?: string;
-      end?: string;
-      metrics?: string;
-      start?: string;
+      end: string;
+      metrics: string;
+      start: string;
     }): Promise<GbpPerformanceReturn> => {
       return this.transport.call({
         groupSegments: ["gbp"],
@@ -2929,9 +2929,9 @@ export class RaviClient {
       });
     },
     /** Publish a local post */
-    postCreate: async (account: string, location: string, options?: {
+    postCreate: async (account: string, location: string, options: {
       connection?: string;
-      payload?: string;
+      payload: string;
     }): Promise<GbpPostCreateReturn> => {
       return this.transport.call({
         groupSegments: ["gbp"],
@@ -2960,10 +2960,10 @@ export class RaviClient {
       });
     },
     /** Update selected fields on a local post */
-    postUpdate: async (account: string, location: string, post: string, options?: {
+    postUpdate: async (account: string, location: string, post: string, options: {
       connection?: string;
-      mask?: string;
-      payload?: string;
+      mask: string;
+      payload: string;
     }): Promise<GbpPostUpdateReturn> => {
       return this.transport.call({
         groupSegments: ["gbp"],
@@ -2994,8 +2994,8 @@ export class RaviClient {
       });
     },
     /** Publish or replace the public reply to a review */
-    reviewReply: async (account: string, location: string, review: string, options?: {
-      comment?: string;
+    reviewReply: async (account: string, location: string, review: string, options: {
+      comment: string;
       connection?: string;
     }): Promise<GbpReviewReplyReturn> => {
       return this.transport.call({
@@ -3027,12 +3027,12 @@ export class RaviClient {
       });
     },
     /** List monthly search keyword impressions for a location */
-    searchKeywords: async (location: string, options?: {
+    searchKeywords: async (location: string, options: {
       connection?: string;
       cursor?: string;
-      endMonth?: string;
+      endMonth: string;
       limit?: string;
-      startMonth?: string;
+      startMonth: string;
     }): Promise<GbpSearchKeywordsReturn> => {
       return this.transport.call({
         groupSegments: ["gbp"],
@@ -3041,9 +3041,9 @@ export class RaviClient {
       });
     },
     /** Complete a pending verification with a PIN */
-    verificationComplete: async (verification: string, options?: {
+    verificationComplete: async (verification: string, options: {
       connection?: string;
-      pin?: string;
+      pin: string;
     }): Promise<GbpVerificationCompleteReturn> => {
       return this.transport.call({
         groupSegments: ["gbp"],

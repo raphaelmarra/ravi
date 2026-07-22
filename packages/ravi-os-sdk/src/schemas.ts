@@ -30609,7 +30609,8 @@ export const GbpAdminUpdateInputSchema = {
     }
   },
   "required": [
-    "admin"
+    "admin",
+    "role"
   ],
   "type": "object"
 } as const satisfies SdkJsonSchema;
@@ -30927,6 +30928,9 @@ export const GbpHealthReturnSchema = {
     "message": {
       "type": "string"
     },
+    "ok": {
+      "type": "boolean"
+    },
     "ready": {
       "type": "boolean"
     },
@@ -30935,6 +30939,7 @@ export const GbpHealthReturnSchema = {
     }
   },
   "required": [
+    "ok",
     "app",
     "connection",
     "ready",
@@ -31117,7 +31122,9 @@ export const GbpLocationUpdateInputSchema = {
     }
   },
   "required": [
-    "location"
+    "location",
+    "mask",
+    "payload"
   ],
   "type": "object"
 } as const satisfies SdkJsonSchema;
@@ -31359,7 +31366,8 @@ export const GbpMediaCreateInputSchema = {
   },
   "required": [
     "account",
-    "location"
+    "location",
+    "payload"
   ],
   "type": "object"
 } as const satisfies SdkJsonSchema;
@@ -31604,7 +31612,9 @@ export const GbpMediaUpdateInputSchema = {
   "required": [
     "account",
     "location",
-    "media"
+    "mask",
+    "media",
+    "payload"
   ],
   "type": "object"
 } as const satisfies SdkJsonSchema;
@@ -31687,7 +31697,10 @@ export const GbpPerformanceInputSchema = {
     }
   },
   "required": [
-    "location"
+    "end",
+    "location",
+    "metrics",
+    "start"
   ],
   "type": "object"
 } as const satisfies SdkJsonSchema;
@@ -31765,7 +31778,8 @@ export const GbpPostCreateInputSchema = {
   },
   "required": [
     "account",
-    "location"
+    "location",
+    "payload"
   ],
   "type": "object"
 } as const satisfies SdkJsonSchema;
@@ -32010,6 +32024,8 @@ export const GbpPostUpdateInputSchema = {
   "required": [
     "account",
     "location",
+    "mask",
+    "payload",
     "post"
   ],
   "type": "object"
@@ -32252,6 +32268,7 @@ export const GbpReviewReplyInputSchema = {
   },
   "required": [
     "account",
+    "comment",
     "location",
     "review"
   ],
@@ -32503,7 +32520,9 @@ export const GbpSearchKeywordsInputSchema = {
     }
   },
   "required": [
-    "location"
+    "endMonth",
+    "location",
+    "startMonth"
   ],
   "type": "object"
 } as const satisfies SdkJsonSchema;
@@ -32577,6 +32596,7 @@ export const GbpVerificationCompleteInputSchema = {
     }
   },
   "required": [
+    "pin",
     "verification"
   ],
   "type": "object"

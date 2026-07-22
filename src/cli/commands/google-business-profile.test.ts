@@ -103,6 +103,19 @@ describe("Google Business Profile CLI contract", () => {
     await expect(commands.adminUpdate("admin-789", "OWNER")).rejects.toThrow("Admin name must be a full");
   });
 
+  it("marks required options for generated SDK input schemas", () => {
+    const locationUpdateOptions = getOptionsMetadata(GoogleBusinessProfileCommands.prototype, "locationUpdate");
+    expect(locationUpdateOptions).toContainEqual(expect.objectContaining({ flags: "--mask <fields>", required: true }));
+    expect(locationUpdateOptions).toContainEqual(
+      expect.objectContaining({ flags: "--payload <json>", required: true }),
+    );
+
+    const performanceOptions = getOptionsMetadata(GoogleBusinessProfileCommands.prototype, "performance");
+    expect(performanceOptions).toContainEqual(expect.objectContaining({ flags: "--metrics <csv>", required: true }));
+    expect(performanceOptions).toContainEqual(expect.objectContaining({ flags: "--start <date>", required: true }));
+    expect(performanceOptions).toContainEqual(expect.objectContaining({ flags: "--end <date>", required: true }));
+  });
+
   it("prints health from credential metadata only", async () => {
     const log = spyOn(console, "log").mockImplementation(() => {});
     const commands = new GoogleBusinessProfileCommands();
@@ -110,6 +123,7 @@ describe("Google Business Profile CLI contract", () => {
     const result = await commands.health("missing-test-connection");
 
     expect(result).toMatchObject({
+      ok: true,
       app: "google-business-profile",
       connection: "missing-test-connection",
       credentialConfigured: false,
@@ -118,5 +132,22 @@ describe("Google Business Profile CLI contract", () => {
       writesEnabled: false,
     });
     expect(log).toHaveBeenCalledWith(JSON.stringify(result, null, 2));
+  });
+
+  it("rejects impossible dates and inverted ranges before credential access", async () => {
+    const commands = new GoogleBusinessProfileCommands();
+
+    await expect(commands.performance("456", "CALL_CLICKS", "2026-99-99", "2026-12-31")).rejects.toThrow(
+      "--start must be a real date",
+    );
+    await expect(commands.performance("456", "CALL_CLICKS", "2026-12-31", "2026-01-01")).rejects.toThrow(
+      "--start must be before or equal to --end",
+    );
+    await expect(commands.searchKeywords("456", "2026-13", "2026-12")).rejects.toThrow(
+      "--start-month must be a real month",
+    );
+    await expect(commands.searchKeywords("456", "2026-12", "2026-01")).rejects.toThrow(
+      "--start-month must be before or equal to --end-month",
+    );
   });
 });
