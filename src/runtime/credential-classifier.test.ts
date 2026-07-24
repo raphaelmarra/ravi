@@ -71,4 +71,18 @@ describe("runtime credential classifier", () => {
     expect(signal.scope).toBe("request");
     expect(signal.retryableByCredential).toBe(false);
   });
+
+  it("classifies a Codex usage-limit failure (no HTTP status) as a switch-eligible rate limit", () => {
+    const signal = classifyRuntimeCredentialFailure({
+      runtimeProvider: "codex",
+      upstreamProvider: "openai",
+      message: "Codex provider usage limit until 2026-07-28 17:02",
+    });
+
+    // Before the fix this fell through to kind "unknown" (safeToSwitch=false),
+    // so provider-continuity held on codex and never migrated to the next target.
+    // It must classify as rate_limited so the continuity engine advances.
+    expect(signal.kind).toBe("rate_limited");
+    expect(signal.confidence).toBe("high");
+  });
 });

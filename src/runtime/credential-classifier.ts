@@ -335,6 +335,13 @@ function classifyKind(input: { status?: number; providerCode?: string; providerT
     }
     return { kind: "rate_limited", confidence: "high", scope: inferLimitScope(text) };
   }
+  // Some providers (e.g. the Codex CLI) report usage/rate limits as plain text
+  // without an HTTP status (e.g. "Codex provider usage limit until <date>").
+  // Keep these failover-eligible instead of falling through to "unknown", which
+  // the continuity engine treats as a non-switch "hold" (no migration fires).
+  if (text.includes("usage limit") || text.includes("usage_limit") || text.includes("usage-limit")) {
+    return { kind: "rate_limited", confidence: "high", scope: inferLimitScope(text) };
+  }
   if (input.status === 403 || code === "permission_error" || type === "permission_error") {
     return { kind: "permission_denied", confidence: "medium", scope: inferPermissionScope(text) };
   }
