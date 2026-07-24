@@ -84,5 +84,9 @@ describe("runtime credential classifier", () => {
     // It must classify as rate_limited so the continuity engine advances.
     expect(signal.kind).toBe("rate_limited");
     expect(signal.confidence).toBe("high");
+    // Provider scope keeps it out of credential recovery: retrying the same
+    // over-limit credential just re-hits the cap, so the engine must switch, not recover.
+    expect(signal.scope).toBe("provider");
+    expect(signal.retryableByCredential).toBe(false);
   });
 });

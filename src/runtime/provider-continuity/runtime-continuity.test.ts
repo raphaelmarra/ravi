@@ -456,6 +456,34 @@ describe("provider continuity R01-R24 synthetic runtime fixtures", () => {
     });
   });
 
+  it("switches off codex to the claude target on a status-less usage-limit failure instead of holding", () => {
+    // Regression: a real codex over-limit turn.failed surfaces as a status-less
+    // "Codex provider usage limit until <date>" message. R13 above proves a generic
+    // status-less failure still HOLDs on unknown evidence; this specific signature must
+    // instead classify as a provider-scoped rate limit and migrate to the next target.
+    const prepared = prepare("usage-limit-switch", 22_500);
+    const switched = failure({
+      metadata: prepared.metadata,
+      message: "Codex provider usage limit until 2026-07-28 17:02",
+      now: 22_501,
+    });
+    expect(switched).toMatchObject({
+      action: "switch_target",
+      target: secondary,
+      journal: {
+        currentTargetIndex: 1,
+        state: "running",
+        terminalOutcome: null,
+      },
+    });
+    // The engine advanced straight to the claude target: one codex normal attempt was
+    // consumed and no credential-recovery attempt was spent re-hitting the same cap.
+    expect(switched.journal?.attempts.map((attempt) => [attempt.targetIndex, attempt.kind])).toEqual([
+      [0, "normal"],
+      [1, "normal"],
+    ]);
+  });
+
   it("R14 maps missing, stale, conflicting, and known-invalid evidence to distinct HOLDs", () => {
     const cases = [
       ["missing", "missing_evidence"],

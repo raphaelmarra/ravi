@@ -335,13 +335,6 @@ function classifyKind(input: { status?: number; providerCode?: string; providerT
     }
     return { kind: "rate_limited", confidence: "high", scope: inferLimitScope(text) };
   }
-  // Some providers (e.g. the Codex CLI) report usage/rate limits as plain text
-  // without an HTTP status (e.g. "Codex provider usage limit until <date>").
-  // Keep these failover-eligible instead of falling through to "unknown", which
-  // the continuity engine treats as a non-switch "hold" (no migration fires).
-  if (text.includes("usage limit") || text.includes("usage_limit") || text.includes("usage-limit")) {
-    return { kind: "rate_limited", confidence: "high", scope: inferLimitScope(text) };
-  }
   if (input.status === 403 || code === "permission_error" || type === "permission_error") {
     return { kind: "permission_denied", confidence: "medium", scope: inferPermissionScope(text) };
   }
@@ -350,6 +343,15 @@ function classifyKind(input: { status?: number; providerCode?: string; providerT
   }
   if (input.status && input.status >= 500) {
     return { kind: "network_transient", confidence: "medium", scope: "provider" };
+  }
+  // Some providers (notably the Codex app-server) report a usage/rate cap as a
+  // status-less plain-text failure, e.g. "Codex provider usage limit until <date>".
+  // With no HTTP status it otherwise falls through to "unknown", which the continuity
+  // engine treats as a non-switch HOLD, so no migration fires. Scope it to the provider
+  // so it is not credential-recoverable — retrying the same over-limit credential just
+  // re-hits the cap — letting the engine advance straight to the next target.
+  if (text.includes("usage limit") || text.includes("usage_limit") || text.includes("usage-limit")) {
+    return { kind: "rate_limited", confidence: "high", scope: "provider" };
   }
   if (
     text.includes("context length") ||
