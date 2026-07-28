@@ -47648,6 +47648,13 @@ export const ProjectsTasksCreateInputSchema = {
       "description": "Dispatch after create using project defaults",
       "type": "boolean"
     },
+    "input": {
+      "description": "Profile input values pinned to the task",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
     "instructions": {
       "description": "Task instructions",
       "type": "string"

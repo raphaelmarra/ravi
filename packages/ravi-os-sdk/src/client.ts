@@ -4315,6 +4315,7 @@ export class RaviClient {
       create: async (project: string, nodeKey: string, title: string, options?: {
         agent?: string;
         dispatch?: boolean;
+        input?: string[];
         instructions?: string;
         priority?: string;
         profile?: string;
