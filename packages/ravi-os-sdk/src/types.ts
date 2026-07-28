@@ -10019,6 +10019,7 @@ export type ProjectsTasksAttachReturn = {
 export type ProjectsTasksCreateInput = {
   agent?: string;
   dispatch?: boolean;
+  input?: string[];
   instructions?: string;
   nodeKey: string;
   priority?: string;
